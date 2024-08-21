@@ -5,3 +5,7 @@
 body {
   font-family: "Roboto", sans-serif;
 }
+
+.input-register {
+  @apply w-full border border-light-gray rounded-md h-[3rem] outline-primary pl-12 text-dark-gray;
+}
