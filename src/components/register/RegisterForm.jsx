@@ -171,7 +171,7 @@ function RegisterForm() {
         )}
       </div>
 
-      <button className="bg-primary text-white py-3 rounded-md my-5">
+      <button className="font-semibold bg-primary text-white py-3 rounded-md my-5 hover:bg-dark-primary transition-colors duration-150">
         Sign Up
       </button>
 

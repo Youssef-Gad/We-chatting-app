@@ -6,7 +6,7 @@ function Register() {
       <div className="w-[600px] bg-white p-10 rounded-2xl shadow-md">
         <div className="text-center text-dark-gray ">
           <p className=" text-4xl font-semibold mb-2">Let's get started</p>
-          <p className="mb-5">
+          <p className="mb-10">
             Join us here,a better place for every conversation
           </p>
         </div>
