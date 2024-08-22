@@ -3,9 +3,17 @@
 @tailwind utilities;
 
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins";
 }
 
 .input-register {
-  @apply w-full border border-light-gray rounded-md h-[3rem] outline-primary pl-12 text-dark-gray;
+  @apply h-[3rem] w-full rounded-md border border-light-gray pl-12 text-dark-gray outline-primary;
+}
+
+.file-input {
+  @apply w-[50%] rounded-md border border-light-gray bg-white px-4 py-2 text-gray;
+}
+
+.file-input::file-selector-button {
+  @apply cursor-pointer rounded-md border-none bg-primary p-2 text-white transition-colors duration-150 hover:bg-dark-primary;
 }

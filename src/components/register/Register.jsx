@@ -2,10 +2,10 @@ import RegisterForm from "./RegisterForm";
 
 function Register() {
   return (
-    <div className="h-[140vh] bg-light-gray flex items-center justify-center">
-      <div className="w-[600px] bg-white p-10 rounded-2xl shadow-md">
-        <div className="text-center text-dark-gray ">
-          <p className=" text-4xl font-semibold mb-2">Let's get started</p>
+    <div className="flex h-[170vh] items-center justify-center bg-light-gray">
+      <div className="w-[600px] rounded-2xl bg-white p-10 shadow-md">
+        <div className="text-center text-dark-gray">
+          <p className="mb-2 text-4xl font-semibold">Let's get started</p>
           <p className="mb-10">
             Join us here,a better place for every conversation
           </p>

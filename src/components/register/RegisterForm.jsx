@@ -1,4 +1,4 @@
-import { faUnlockKeyhole } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faUnlockKeyhole } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { Form, Link, useActionData } from "react-router-dom";
@@ -10,6 +10,7 @@ import {
   faEyeSlash,
   faUser,
 } from "@fortawesome/free-regular-svg-icons";
+import { register } from "../../services/apiAuth";
 
 function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,21 +21,21 @@ function RegisterForm() {
     <Form method="POST" className="flex flex-col gap-5">
       <div className="flex justify-between">
         {/* Firstname */}
-        <div className="flex flex-col gap-1 relative">
+        <div className="relative flex flex-col gap-1">
           <label htmlFor="firstname" className="text-dark-gray">
             First Name
           </label>
           <input
             type="text"
             id="firstname"
-            name="firstname"
+            name="firstName"
             placeholder="John"
             className="input-register"
             required
           />
           <FontAwesomeIcon
             icon={faUser}
-            className="text-gray absolute top-[2.7rem] left-5 text-lg"
+            className="absolute left-5 top-[2.7rem] text-lg text-gray"
           />
           {fromErrors?.firstname && (
             <p className="text-warning">
@@ -45,21 +46,21 @@ function RegisterForm() {
         </div>
 
         {/* Lastname */}
-        <div className="flex flex-col gap-1 relative">
+        <div className="relative flex flex-col gap-1">
           <label htmlFor="lastname" className="text-dark-gray">
             Last Name
           </label>
           <input
             type="text"
             id="lastname"
-            name="lastname"
+            name="lastName"
             placeholder="Doe"
             className="input-register"
             required
           />
           <FontAwesomeIcon
             icon={faUser}
-            className="text-gray absolute top-[2.7rem] left-5 text-lg"
+            className="absolute left-5 top-[2.7rem] text-lg text-gray"
           />
           {fromErrors?.lastname && (
             <p className="text-warning">
@@ -71,7 +72,7 @@ function RegisterForm() {
       </div>
 
       {/* Email */}
-      <div className="flex flex-col gap-1 relative">
+      <div className="relative flex flex-col gap-1">
         <label htmlFor="email" className="text-dark-gray">
           Email Address
         </label>
@@ -85,7 +86,7 @@ function RegisterForm() {
         />
         <FontAwesomeIcon
           icon={faEnvelope}
-          className="text-gray absolute top-[2.7rem] left-5 text-lg"
+          className="absolute left-5 top-[2.7rem] text-lg text-gray"
         />
         {fromErrors?.email && (
           <p className="text-warning">
@@ -96,7 +97,7 @@ function RegisterForm() {
       </div>
 
       {/* Password */}
-      <div className="flex flex-col gap-1 relative">
+      <div className="relative flex flex-col gap-1">
         <label htmlFor="password" className="text-dark-gray">
           Password
         </label>
@@ -110,18 +111,18 @@ function RegisterForm() {
         />
         <FontAwesomeIcon
           icon={faUnlockKeyhole}
-          className="text-gray absolute top-[2.7rem] left-5 text-lg"
+          className="absolute left-5 top-[2.7rem] text-lg text-gray"
         />
         {showPassword ? (
           <FontAwesomeIcon
             icon={faEyeSlash}
-            className="absolute right-5 top-[2.6rem] text-xl text-gray cursor-pointer"
+            className="absolute right-5 top-[2.6rem] cursor-pointer text-xl text-gray"
             onClick={() => setShowPassword((s) => !s)}
           />
         ) : (
           <FontAwesomeIcon
             icon={faEye}
-            className="absolute right-5 top-[2.6rem] text-xl text-gray cursor-pointer"
+            className="absolute right-5 top-[2.6rem] cursor-pointer text-xl text-gray"
             onClick={() => setShowPassword((s) => !s)}
           />
         )}
@@ -134,7 +135,7 @@ function RegisterForm() {
       </div>
 
       {/* Confirm Password */}
-      <div className="flex flex-col gap-1 relative">
+      <div className="relative flex flex-col gap-1">
         <label htmlFor="confirm-password" className="text-dark-gray">
           Confirm Password
         </label>
@@ -148,18 +149,18 @@ function RegisterForm() {
         />
         <FontAwesomeIcon
           icon={faUnlockKeyhole}
-          className="text-gray absolute top-[2.7rem] left-5 text-lg"
+          className="absolute left-5 top-[2.7rem] text-lg text-gray"
         />
         {showConfirmPassword ? (
           <FontAwesomeIcon
             icon={faEyeSlash}
-            className="absolute right-5 top-[2.6rem] text-xl text-gray cursor-pointer"
+            className="absolute right-5 top-[2.6rem] cursor-pointer text-xl text-gray"
             onClick={() => setShowConfirmPassword((s) => !s)}
           />
         ) : (
           <FontAwesomeIcon
             icon={faEye}
-            className="absolute right-5 top-[2.6rem] text-xl text-gray cursor-pointer"
+            className="absolute right-5 top-[2.6rem] cursor-pointer text-xl text-gray"
             onClick={() => setShowConfirmPassword((s) => !s)}
           />
         )}
@@ -171,13 +172,33 @@ function RegisterForm() {
         )}
       </div>
 
-      <button className="font-semibold bg-primary text-white py-3 rounded-md my-5 hover:bg-dark-primary transition-colors duration-150">
+      {/* Photo */}
+      <div className="relative flex flex-col gap-1">
+        <label htmlFor="photo" className="text-dark-gray">
+          Your Photo
+        </label>
+        <input
+          type="file"
+          id="photo"
+          name="photo"
+          required
+          className="file-input"
+        />
+        {fromErrors?.photo && (
+          <p className="text-warning">
+            <FontAwesomeIcon icon={faCircleInfo} className="text-lg" />{" "}
+            {fromErrors.photo}
+          </p>
+        )}
+      </div>
+
+      <button className="my-5 rounded-md bg-primary py-3 font-semibold text-white transition-colors duration-150 hover:bg-dark-primary">
         Sign Up
       </button>
 
       <p className="text-center text-dark-gray">
         Already a Member ?{" "}
-        <Link to="/login" className="text-primary font-semibold">
+        <Link to="/login" className="font-semibold text-primary">
           Login
         </Link>
       </p>
@@ -195,14 +216,13 @@ export async function action({ request }) {
   const errors = {};
   if (!isValidEmail(data.email))
     errors.email = "Please provide a correct email";
-  if (data.firstname.length < 3) errors.firstname = "At least 3 characters";
-  if (data.lastname.length < 3) errors.lastname = "At least 3 characters";
+  if (data.firstName.length < 3) errors.firstname = "At least 3 characters";
+  if (data.lastName.length < 3) errors.lastname = "At least 3 characters";
   if (data.password.length < 8) errors.password = "At least 8 characters";
   if (data.password !== data.confirmPassword)
     errors.confirmPassword = "Password doesn't match";
   if (Object.keys(errors).length > 0) return errors;
 
-  console.log(data);
-
-  return null;
+  const res = await register(formData);
+  return res;
 }
