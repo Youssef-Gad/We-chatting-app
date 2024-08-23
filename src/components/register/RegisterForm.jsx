@@ -1,4 +1,4 @@
-import { faImage, faUnlockKeyhole } from "@fortawesome/free-solid-svg-icons";
+import { faUnlockKeyhole } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { Form, Link, useActionData } from "react-router-dom";
@@ -224,5 +224,10 @@ export async function action({ request }) {
   if (Object.keys(errors).length > 0) return errors;
 
   const res = await register(formData);
+  localStorage.setItem("activationToken", res.activationToken);
+  console.log(data);
+
+  console.log(res);
+
   return res;
 }

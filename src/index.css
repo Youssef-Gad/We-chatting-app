@@ -6,6 +6,10 @@ body {
   font-family: "Poppins";
 }
 
+.input-search {
+  @apply h-[2.5rem] w-[90%] rounded-md border border-light-gray bg-[#eeeeee8e] pl-5 text-dark-gray outline-primary;
+}
+
 .input-register {
   @apply h-[3rem] w-full rounded-md border border-light-gray pl-12 text-dark-gray outline-primary;
 }
