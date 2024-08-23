@@ -21,3 +21,82 @@ body {
 .file-input::file-selector-button {
   @apply cursor-pointer rounded-md border-none bg-primary p-2 text-white transition-colors duration-150 hover:bg-dark-primary;
 }
+
+.login-form {
+  width: 50%;
+  height: 70vh;
+  margin: auto;
+  margin-top: 130px;
+  padding: 75px;
+  border-radius: 20px;
+  background-color: #ffffff;
+  text-align: center;
+  box-shadow: 10 10 10 10 black;
+}
+
+.lab {
+  padding-right: 550px;
+}
+.inp {
+  display: block;
+  padding: 10px;
+}
+
+.btn {
+  width: 90%;
+  background-color: #38c585;
+  padding: 5px 5px;
+  border-radius: 5px;
+  color: #ffffff;
+}
+
+.hi {
+  font-size: 25px;
+  font-weight: bold;
+  color: black;
+  padding-bottom: 15px;
+}
+
+.form {
+  border-radius: 5px;
+  padding: 8px;
+  border: solid 1px #96a1af;
+  width: 90%;
+}
+
+.invalid {
+  border: solid 1px #e75f5f;
+  color: #e75f5f;
+}
+
+/* .logo {
+  width: 100%;
+  height: 10vh;
+  padding: 25px;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: solid 1px #96a1af;
+} */
+
+/* .pi {
+  color: #38c585;
+  font-size: 30px;
+  font-weight: bolder;
+} */
+
+/* .btn1 {
+  background-color: #38c585;
+  padding: 5px 5px;
+  border-radius: 5px;
+  color: white;
+} */
+
+a {
+  color: #38c585;
+}
+
+.checkbox:focus {
+  color: #38c585;
+}
