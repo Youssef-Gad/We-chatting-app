@@ -3,8 +3,23 @@
 @tailwind utilities;
 
 body {
-  font-family: "Roboto", sans-serif;
-  background-color: #e9ecef;
+  font-family: "Poppins";
+}
+
+.input-search {
+  @apply h-[2.5rem] w-[90%] rounded-md border border-light-gray bg-[#eeeeee8e] pl-5 text-dark-gray outline-primary;
+}
+
+.input-register {
+  @apply h-[3rem] w-full rounded-md border border-light-gray pl-12 text-dark-gray outline-primary;
+}
+
+.file-input {
+  @apply w-[50%] rounded-md border border-light-gray bg-white px-4 py-2 text-gray;
+}
+
+.file-input::file-selector-button {
+  @apply cursor-pointer rounded-md border-none bg-primary p-2 text-white transition-colors duration-150 hover:bg-dark-primary;
 }
 
 .login-form {
