@@ -1,8 +1,7 @@
 import { faUnlockKeyhole } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
-import { Form, Link, useActionData } from "react-router-dom";
-import { isValidEmail } from "../../helpers/helpers";
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons/faCircleInfo";
 import {
   faEnvelope,
@@ -11,15 +10,69 @@ import {
   faUser,
 } from "@fortawesome/free-regular-svg-icons";
 import { register } from "../../services/apiAuth";
+import toast from "react-hot-toast";
 
 function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const fromErrors = useActionData();
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [photo, setPhoto] = useState("");
+  const photoRef = useRef(null);
+
+  const formRef = useRef(null);
+  const [formErrors, setFormErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!formRef.current) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("photo", photo);
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("confirmPassword", confirmPassword);
+
+      // Form Validations
+      const res = await register(formData);
+
+      if (!res.success) {
+        const errors = {};
+        if (res.errors?.length > 0) {
+          res.errors?.map((error) => (errors[error.path] = error.msg));
+          setFormErrors(errors);
+        }
+      }
+
+      if (res.success) {
+        toast.success("Check your email for activation code");
+        localStorage.setItem("activationToken", res.activationToken);
+        navigate("/activateAccount");
+      } else {
+        toast.error("Failed to register. Please try again.");
+        formRef.current.reset();
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
-    <Form method="POST" className="flex flex-col gap-5">
-      <div className="flex justify-between">
+    <form onSubmit={handleSubmit} ref={formRef} className="flex flex-col gap-5">
+      <div className="flex justify-between gap-3">
         {/* Firstname */}
         <div className="relative flex flex-col gap-1">
           <label htmlFor="firstname" className="text-dark-gray">
@@ -29,18 +82,24 @@ function RegisterForm() {
             type="text"
             id="firstname"
             name="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             placeholder="John"
             className="input-register"
+            style={{
+              outline: `${formErrors.firstName ? "1px solid #E75F5F" : ""}`,
+            }}
             required
+            disabled={isSubmitting}
           />
           <FontAwesomeIcon
             icon={faUser}
             className="absolute left-5 top-[2.7rem] text-lg text-gray"
           />
-          {fromErrors?.firstname && (
+          {formErrors.firstName && (
             <p className="text-warning">
               <FontAwesomeIcon icon={faCircleInfo} className="text-lg" />
-              {fromErrors.firstname}
+              {formErrors.firstName}
             </p>
           )}
         </div>
@@ -54,18 +113,24 @@ function RegisterForm() {
             type="text"
             id="lastname"
             name="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             placeholder="Doe"
             className="input-register"
+            style={{
+              outline: `${formErrors?.lastName ? "1px solid #E75F5F" : ""}`,
+            }}
             required
+            disabled={isSubmitting}
           />
           <FontAwesomeIcon
             icon={faUser}
             className="absolute left-5 top-[2.7rem] text-lg text-gray"
           />
-          {fromErrors?.lastname && (
+          {formErrors?.lastName && (
             <p className="text-warning">
               <FontAwesomeIcon icon={faCircleInfo} className="text-lg" />
-              {fromErrors.lastname}
+              {formErrors.lastName}
             </p>
           )}
         </div>
@@ -80,18 +145,24 @@ function RegisterForm() {
           type="text"
           id="email"
           name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="Email@Example.com"
           className="input-register"
+          style={{
+            outline: `${formErrors?.email ? "1px solid #E75F5F" : ""}`,
+          }}
           required
+          disabled={isSubmitting}
         />
         <FontAwesomeIcon
           icon={faEnvelope}
           className="absolute left-5 top-[2.7rem] text-lg text-gray"
         />
-        {fromErrors?.email && (
+        {formErrors?.email && (
           <p className="text-warning">
             <FontAwesomeIcon icon={faCircleInfo} className="text-lg" />{" "}
-            {fromErrors.email}
+            {formErrors.email}
           </p>
         )}
       </div>
@@ -105,9 +176,15 @@ function RegisterForm() {
           type={showPassword ? "text" : "password"}
           id="password"
           name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           className="input-register"
+          style={{
+            outline: `${formErrors?.password ? "1px solid #E75F5F" : ""}`,
+          }}
           required
+          disabled={isSubmitting}
         />
         <FontAwesomeIcon
           icon={faUnlockKeyhole}
@@ -126,10 +203,10 @@ function RegisterForm() {
             onClick={() => setShowPassword((s) => !s)}
           />
         )}
-        {fromErrors?.password && (
+        {formErrors?.password && (
           <p className="text-warning">
             <FontAwesomeIcon icon={faCircleInfo} className="text-lg" />{" "}
-            {fromErrors.password}
+            {formErrors.password}
           </p>
         )}
       </div>
@@ -143,9 +220,15 @@ function RegisterForm() {
           type={showConfirmPassword ? "text" : "password"}
           id="confirm-password"
           name="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           placeholder="Confirm Password"
           className="input-register"
+          style={{
+            outline: `${formErrors?.confirmPassword ? "1px solid #E75F5F" : ""}`,
+          }}
           required
+          disabled={isSubmitting}
         />
         <FontAwesomeIcon
           icon={faUnlockKeyhole}
@@ -164,10 +247,10 @@ function RegisterForm() {
             onClick={() => setShowConfirmPassword((s) => !s)}
           />
         )}
-        {fromErrors?.confirmPassword && (
+        {formErrors?.confirmPassword && (
           <p className="text-warning">
             <FontAwesomeIcon icon={faCircleInfo} className="text-lg" />{" "}
-            {fromErrors.confirmPassword}
+            {formErrors.confirmPassword}
           </p>
         )}
       </div>
@@ -178,22 +261,18 @@ function RegisterForm() {
           Your Photo
         </label>
         <input
+          onChange={(e) => setPhoto(e.target.files[0])}
+          ref={photoRef}
           type="file"
           id="photo"
           name="photo"
           required
           className="file-input"
         />
-        {fromErrors?.photo && (
-          <p className="text-warning">
-            <FontAwesomeIcon icon={faCircleInfo} className="text-lg" />{" "}
-            {fromErrors.photo}
-          </p>
-        )}
       </div>
 
       <button className="my-5 rounded-md bg-primary py-3 font-semibold text-white transition-colors duration-150 hover:bg-dark-primary">
-        Sign Up
+        {isSubmitting ? "Signning Up..." : "Sign Up"}
       </button>
 
       <p className="text-center text-dark-gray">
@@ -202,32 +281,8 @@ function RegisterForm() {
           Login
         </Link>
       </p>
-    </Form>
+    </form>
   );
 }
 
 export default RegisterForm;
-
-export async function action({ request }) {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-
-  // Form Validations
-  const errors = {};
-  if (!isValidEmail(data.email))
-    errors.email = "Please provide a correct email";
-  if (data.firstName.length < 3) errors.firstname = "At least 3 characters";
-  if (data.lastName.length < 3) errors.lastname = "At least 3 characters";
-  if (data.password.length < 8) errors.password = "At least 8 characters";
-  if (data.password !== data.confirmPassword)
-    errors.confirmPassword = "Password doesn't match";
-  if (Object.keys(errors).length > 0) return errors;
-
-  const res = await register(formData);
-  localStorage.setItem("activationToken", res.activationToken);
-  console.log(data);
-
-  console.log(res);
-
-  return res;
-}

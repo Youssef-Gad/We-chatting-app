@@ -1,12 +1,90 @@
-import { Form } from "react-router-dom";
-import { activateEmail } from "../../services/apiAuth";
+import { redirect, useFetcher } from "react-router-dom";
+import { activateEmail, resendActivationCode } from "../../services/apiAuth";
+import ActivationNum from "./ActivationNum";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 
 function ActivateAccount() {
+  const fethcer = useFetcher();
+  const activationToken = localStorage.getItem("activationToken");
+  const [seconds, setSeconds] = useState(59);
+
+  async function handleResendActivationCode() {
+    const res = await resendActivationCode(activationToken);
+    if (res.success) {
+      toast.success(res.message);
+      setSeconds(59);
+    }
+  }
+
+  useEffect(() => {
+    if (seconds > 0) {
+      const timerId = setInterval(() => {
+        setSeconds((prevSeconds) => prevSeconds - 1);
+      }, 1000);
+
+      return () => clearInterval(timerId);
+    }
+  }, [seconds]);
+
   return (
-    <div>
-      <Form method="POST">
-        <input type="text" name="activationCode" className="input-register" />
-      </Form>
+    <div className="h-[100vh] bg-light-gray">
+      <div className="flex flex-col items-center justify-center py-10">
+        <div className="mx-auto max-w-2xl bg-white">
+          <div className="flex h-[200px] w-full flex-col items-center justify-center gap-5 bg-primary text-white">
+            <div className="flex items-center gap-3">
+              <div className="h-[1px] w-10 bg-white"></div>
+
+              <div className="h-[1px] w-10 bg-white"></div>
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="text-center text-sm font-normal tracking-widest sm:text-xl">
+                THANKS FOR SIGNING UP!
+              </div>
+              <div className="text-xl font-bold capitalize tracking-wider sm:text-3xl">
+                Check your E-mail Address
+              </div>
+            </div>
+          </div>
+          <div className="my-8 px-10">
+            <p className="text-gray-600 mt-4 leading-loose">
+              This passcode will only be valid for the next
+              <span className="font-bold"> 5 minutes</span> Please introduce the{" "}
+              <span className="font-bold">6 digit</span> code we sent via email.
+            </p>
+
+            <fethcer.Form
+              action="/activateAccount"
+              method="POST"
+              className="mt-4 flex flex-col items-center justify-center gap-x-4"
+            >
+              <div className="mb-2 flex space-x-2">
+                <ActivationNum name={"num1"} />
+                <ActivationNum name={"num2"} />
+                <ActivationNum name={"num3"} />
+                <ActivationNum name={"num4"} />
+                <ActivationNum name={"num5"} />
+                <ActivationNum name={"num6"} />
+              </div>
+              <div className="mt-6 flex items-center justify-center gap-3">
+                <button className="transform rounded-lg bg-primary px-6 py-2 text-sm font-bold capitalize text-white transition-colors duration-150 hover:bg-dark-primary focus:outline-none">
+                  Verify Code
+                </button>
+                <button
+                  disabled={seconds > 0}
+                  onClick={handleResendActivationCode}
+                  className="transform rounded-lg border-2 border-primary px-6 py-2 text-sm font-bold capitalize transition-colors duration-150 hover:bg-dark-primary hover:text-white focus:outline-none disabled:border-none disabled:bg-warning disabled:text-white"
+                >
+                  Resend Activation Code
+                </button>
+                <div className="w-[2rem] font-semibold">
+                  {seconds < 10 ? `0${seconds}` : seconds}:00
+                </div>
+              </div>
+            </fethcer.Form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -15,12 +93,18 @@ export default ActivateAccount;
 
 export async function action({ request }) {
   const formData = await request.formData();
-  const data = Object.fromEntries(formData);
+  const nums = Object.fromEntries(formData);
+  const activationCode = `${nums.num1}${nums.num2}${nums.num3}${nums.num4}${nums.num5}${nums.num6}`;
   const token = localStorage.getItem("activationToken");
 
-  console.log(token, data.activationCode);
-
-  const res = await activateEmail(data, token);
-
-  return res;
+  if (activationCode.length) {
+    const res = await activateEmail({ activationCode }, token);
+    if (res.success === "fail") {
+      toast.error(res.message);
+    } else if (res.success === true) {
+      toast.success(res.message);
+      return redirect("/login");
+    }
+  }
+  return null;
 }

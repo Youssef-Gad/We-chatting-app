@@ -1,6 +1,18 @@
 import { BASE_URL } from "../constants/constants";
 
-// const token = localStorage.getItem("activationToken");
+export async function protectedRoute() {
+  try {
+    const res = await fetch(`${BASE_URL}`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 export async function register(userData) {
   try {
@@ -8,10 +20,6 @@ export async function register(userData) {
       method: "POST",
       body: userData,
     });
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
 
     const data = await res.json();
     return data;
@@ -30,10 +38,6 @@ export async function activateEmail(activationCode, token) {
       body: JSON.stringify(activationCode),
     });
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
     const data = await res.json();
     return data;
   } catch (error) {
@@ -49,11 +53,101 @@ export async function login(userData) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(userData),
+      credentials: "include",
     });
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function resendActivationCode(token) {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/resendActivationCode/${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function forgetpassword(email) {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/forgetpassword`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(email),
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function passwordResetVerification(
+  verificationCode,
+  passwordResetVerificationToken,
+) {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/auth/passwordResetVerification/${passwordResetVerificationToken}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(verificationCode),
+      },
+    );
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function resetPassword(newData, passwordResetToken) {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/auth/resetPassword/${passwordResetToken}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newData),
+      },
+    );
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function logout() {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
 
     const data = await res.json();
     return data;

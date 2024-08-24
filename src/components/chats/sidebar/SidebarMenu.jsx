@@ -1,8 +1,20 @@
 import { faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
+import { logout } from "../../../services/apiAuth";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function SidebarMenu({ menuRef }) {
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    const res = await logout();
+    if (res.success) {
+      toast.success(res.message);
+      navigate("/login");
+    }
+  }
+
   return (
     <ul
       ref={menuRef}
@@ -14,7 +26,7 @@ function SidebarMenu({ menuRef }) {
       </li>
       <li className="flex items-center gap-3 text-warning">
         <FontAwesomeIcon icon={faRightFromBracket} />
-        <Link to="/login">Logout</Link>
+        <button onClick={handleLogout}>Logout</button>
       </li>
     </ul>
   );

@@ -1,31 +1,26 @@
 import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import SidebarMenu from "./SidebarMenu";
 import useOutsideClick from "../../../hooks/useOutsideClick";
-import { getRandomColor } from "../../../helpers/helpers";
+import { useAuth } from "../../../context/AuthContext";
 
 function SidebarHeader() {
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
   const [isOpen, setIsOpen] = useOutsideClick(menuRef, buttonRef);
-  const [color] = useState(getRandomColor());
+  const { user } = useAuth();
 
   return (
     <div className="relative flex items-center justify-between border-b border-light-gray px-5 py-4">
       <p className="text-3xl font-semibold uppercase text-primary">wechat</p>
       <div className="flex items-center gap-3">
-        <FontAwesomeIcon
-          icon={faCircleUser}
-          className="text-5xl text-dark-gray"
+        <img
+          src={user.photo}
+          alt="userPhoto"
+          className="h-11 w-11 rounded-full"
         />
-        <p
-          style={{ backgroundColor: color }}
-          className="flex h-12 w-12 items-center justify-center rounded-full text-2xl font-semibold text-white"
-        >
-          YG
-        </p>
         <FontAwesomeIcon
           ref={buttonRef}
           onClick={() => setIsOpen((m) => !m)}
