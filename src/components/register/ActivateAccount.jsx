@@ -1,8 +1,8 @@
 import { redirect, useFetcher } from "react-router-dom";
 import { activateEmail, resendActivationCode } from "../../services/apiAuth";
-import ActivationNum from "./ActivationNum";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import ActivationInputs from "./ActivationInputs";
 
 function ActivateAccount() {
   const fethcer = useFetcher();
@@ -59,12 +59,7 @@ function ActivateAccount() {
               className="mt-4 flex flex-col items-center justify-center gap-x-4"
             >
               <div className="mb-2 flex space-x-2">
-                <ActivationNum name={"num1"} />
-                <ActivationNum name={"num2"} />
-                <ActivationNum name={"num3"} />
-                <ActivationNum name={"num4"} />
-                <ActivationNum name={"num5"} />
-                <ActivationNum name={"num6"} />
+                <ActivationInputs />
               </div>
               <div className="mt-6 flex items-center justify-center gap-3">
                 <button className="transform rounded-lg bg-primary px-6 py-2 text-sm font-bold capitalize text-white transition-colors duration-150 hover:bg-dark-primary focus:outline-none">

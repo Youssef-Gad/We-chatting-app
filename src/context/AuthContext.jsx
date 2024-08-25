@@ -12,6 +12,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       const res = await protectedRoute();
+      console.log(res);
 
       if (res.success === "fail") {
         toast.error(res.message);
@@ -20,7 +21,7 @@ export function AuthProvider({ children }) {
     };
 
     checkAuth();
-  }, [navigate]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
