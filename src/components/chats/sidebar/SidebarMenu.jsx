@@ -3,9 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { logout } from "../../../services/apiAuth";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useHome } from "../../../context/HomeContext";
 
 function SidebarMenu({ menuRef }) {
   const navigate = useNavigate();
+  const { setCurrentSection } = useHome();
 
   async function handleLogout() {
     const res = await logout();
@@ -22,7 +24,7 @@ function SidebarMenu({ menuRef }) {
     >
       <li className="flex items-center gap-3">
         <FontAwesomeIcon icon={faGear} />
-        <p>Settings</p>
+        <button onClick={() => setCurrentSection("settings")}>Settings</button>
       </li>
       <li className="flex items-center gap-3 text-warning">
         <FontAwesomeIcon icon={faRightFromBracket} />

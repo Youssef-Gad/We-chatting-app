@@ -2,7 +2,7 @@ import ChatList from "./ChatList";
 import SidebarHeader from "./SidebarHeader";
 import SidebarSearch from "./SidebarSearch";
 
-function Sidbar() {
+function Sidebar() {
   return (
     <div className="w-[500px] border-r border-light-gray">
       <SidebarHeader />
@@ -12,4 +12,4 @@ function Sidbar() {
   );
 }
 
-export default Sidbar;
+export default Sidebar;
