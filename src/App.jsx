@@ -15,16 +15,16 @@ import NewPassword, {
   action as newPasswordAction,
 } from "./components/reset password/NewPassword";
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/protected route/ProtectedRoute";
+import { HomeProvider } from "./context/HomeContext";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <AuthProvider>
-        <ProtectedRoute>
+        <HomeProvider>
           <Home />
-        </ProtectedRoute>
+        </HomeProvider>
       </AuthProvider>
     ),
   },

@@ -6,25 +6,32 @@ import { useNavigate } from "react-router-dom";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = async () => {
       const res = await protectedRoute();
-      console.log(res);
 
       if (res.success === "fail") {
-        toast.error(res.message);
+        toast.error("Please Login To Access This Page");
         navigate("/login");
-      } else if (res.message === "protected route") setUser(res.user);
+      } else if (res.message === "protected route") {
+        setUser(res.user);
+        setIsAuthenticated(true);
+      }
+      setIsLoading(false);
     };
 
     checkAuth();
-  }, []);
+  }, [navigate]);
 
   return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, isAuthenticated, isLoading }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 

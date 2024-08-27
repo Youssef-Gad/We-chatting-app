@@ -2,7 +2,7 @@ import { redirect, useFetcher } from "react-router-dom";
 import { activateEmail, resendActivationCode } from "../../services/apiAuth";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import ActivationInputs from "./ActivationInputs";
+import ActivationInputs from "../../ui/ActivationInputs";
 
 function ActivateAccount() {
   const fethcer = useFetcher();
@@ -11,10 +11,11 @@ function ActivateAccount() {
 
   async function handleResendActivationCode() {
     const res = await resendActivationCode(activationToken);
-    if (res.success) {
+
+    if (res.success === true) {
       toast.success(res.message);
       setSeconds(59);
-    }
+    } else if (res.success === "fail") toast.error(res.message);
   }
 
   useEffect(() => {
@@ -94,6 +95,7 @@ export async function action({ request }) {
 
   if (activationCode.length) {
     const res = await activateEmail({ activationCode }, token);
+
     if (res.success === "fail") {
       toast.error(res.message);
     } else if (res.success === true) {

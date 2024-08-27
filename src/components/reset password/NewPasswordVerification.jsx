@@ -3,7 +3,7 @@ import { useState } from "react";
 import EmailVerification from "./EmailVerification";
 import { passwordResetVerification } from "../../services/apiAuth";
 import toast from "react-hot-toast";
-import ActivationInputs from "../register/ActivationInputs";
+import ActivationInputs from "../../ui/ActivationInputs";
 
 function NewPasswordVerification() {
   const fetcher = useFetcher();

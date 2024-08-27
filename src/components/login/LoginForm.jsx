@@ -24,7 +24,7 @@ function LoginForm() {
       className="login-form"
     >
       <p className="hi">Hi ,welcome</p>
-      <p className="mb-10">Enter your e-mail and passward</p>
+      <p className="mb-10">Enter your E-mail and Passward</p>
 
       <div className="flex flex-col gap-5">
         {/* Email */}
@@ -118,9 +118,15 @@ export async function action({ request }) {
     toast.error(res.message);
   } else if (res.errors?.length > 0) {
     toast.error("Wrong Email");
-  } else if (res.success) {
-    toast.success("Successfully Logged In");
-    return redirect("/");
+  } else if (res.success === true) {
+    if (res.activationToken !== undefined) {
+      localStorage.setItem("activationToken", res.activationToken);
+      toast.error("Please Activate Your Email");
+      return redirect("/activateAccount");
+    } else {
+      toast.success("Successfully Logged In");
+      return redirect("/");
+    }
   }
   return null;
 }
