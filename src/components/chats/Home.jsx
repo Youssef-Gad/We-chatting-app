@@ -3,11 +3,12 @@ import Loader from "../../ui/Loader";
 import Sidebar from "./sidebar/Sidebar";
 import { useHome } from "../../context/HomeContext";
 import Settings from "../settings/Settings";
-import EmptyChat from "./chat area/EmptyChat";
+import EmptyChat from "./messages area/EmptyChat";
+import Chat from "./messages area/Chat";
 
 function Home() {
   const { isLoading } = useAuth();
-  const { currentSection } = useHome();
+  const { currentSection, activeChat } = useHome();
 
   if (isLoading) return <Loader />;
   else
@@ -20,7 +21,7 @@ function Home() {
         ) : (
           <div></div>
         )}
-        <EmptyChat />
+        {!activeChat ? <EmptyChat /> : <Chat />}
       </div>
     );
 }

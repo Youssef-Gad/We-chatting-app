@@ -1,10 +1,16 @@
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useHome } from "../../../context/HomeContext";
 
 function ChatList() {
+  const { setActiveChat } = useHome();
+
   return (
     <div className="h-[70vh] overflow-y-scroll">
-      <div className="flex cursor-pointer justify-between rounded-md p-5 hover:bg-[#eeeeee86]">
+      <div
+        className="flex cursor-pointer justify-between rounded-md p-5 hover:bg-[#eeeeee86]"
+        onClick={() => setActiveChat(true)}
+      >
         <div className="flex gap-6">
           <FontAwesomeIcon
             icon={faCircleUser}
