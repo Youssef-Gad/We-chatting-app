@@ -37,7 +37,7 @@ export async function updateUser(newData) {
   }
 }
 
-export async function delteUser() {
+export async function deleteUser() {
   try {
     const res = await fetch(`${BASE_URL}/user`, {
       method: "DELETE",
