@@ -13,6 +13,7 @@ function SidebarMenu({ menuRef }) {
     const res = await logout();
     if (res.success) {
       toast.success(res.message);
+      localStorage.clear();
       navigate("/login");
     }
   }

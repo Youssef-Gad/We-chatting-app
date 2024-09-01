@@ -125,6 +125,7 @@ export async function action({ request }) {
       return redirect("/activateAccount");
     } else {
       toast.success("Successfully Logged In");
+      localStorage.setItem("token", res.token);
       return redirect("/");
     }
   }

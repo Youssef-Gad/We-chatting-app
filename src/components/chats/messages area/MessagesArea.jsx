@@ -47,11 +47,15 @@ function MessagesArea() {
 
   return (
     <div
-      className="flex flex-grow flex-col items-end gap-2 overflow-y-scroll bg-light-gray px-16 py-3"
+      className="flex flex-grow flex-col items-end gap-2 overflow-y-scroll bg-light-gray px-14 py-3"
       ref={messageArea}
     >
       {messages.map((message, i) => (
         <Message message={message} key={i} />
+      ))}
+
+      {messages.map((message, i) => (
+        <Message message={message} key={i} otheruser={true} />
       ))}
 
       {showScrollToDown && (

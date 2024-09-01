@@ -5,6 +5,7 @@ import { useHome } from "../../context/HomeContext";
 import Settings from "../settings/Settings";
 import EmptyChat from "./messages area/EmptyChat";
 import Chat from "./messages area/Chat";
+import EditUser from "../user profile/EditUser";
 
 function Home() {
   const { isLoading } = useAuth();
@@ -18,6 +19,8 @@ function Home() {
           <Sidebar />
         ) : currentSection === "settings" ? (
           <Settings />
+        ) : currentSection === "editUser" ? (
+          <EditUser />
         ) : (
           <div></div>
         )}

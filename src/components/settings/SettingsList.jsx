@@ -8,7 +8,7 @@ function SettingsList() {
   return (
     <ul className="flex flex-col p-5">
       <li
-        className="flex cursor-pointer items-center justify-between"
+        className="flex cursor-pointer items-center justify-between rounded-lg p-3 hover:bg-[#eeeeee86]"
         onClick={() => navigate("/newPasswordVerifiction")}
       >
         <div className="flex items-center gap-5">
