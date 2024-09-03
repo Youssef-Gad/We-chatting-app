@@ -60,12 +60,12 @@ function MessagesArea() {
 
       {showScrollToDown && (
         <div
-          className="fixed bottom-[6rem] right-[1.5rem] cursor-pointer"
+          className="fixed bottom-[6rem] right-[0.8rem] cursor-pointer"
           onClick={handleScrollToDown}
         >
           <FontAwesomeIcon
             icon={faChevronDown}
-            className="rounded-full bg-primary p-3 text-xl text-white"
+            className="rounded-full bg-primary p-2 text-xl text-white"
           />
         </div>
       )}

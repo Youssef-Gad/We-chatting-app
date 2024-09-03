@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 const ChatContext = createContext();
 
 export function ChatProvider({ children }) {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({});
   const [messages, setMessages] = useState([]);
 
   return (

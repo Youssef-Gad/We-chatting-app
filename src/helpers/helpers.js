@@ -10,3 +10,11 @@ export function getRandomColor() {
   }
   return color;
 }
+
+export function getCurrentTime() {
+  const date = new Date();
+  const options = { hour: "numeric", minute: "2-digit", hour12: true };
+  const timeString = date.toLocaleString("en-US", options);
+
+  return timeString.toLowerCase();
+}
