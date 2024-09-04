@@ -16,15 +16,21 @@ import NewPassword, {
 } from "./components/reset password/NewPassword";
 import { AuthProvider } from "./context/AuthContext";
 import { HomeProvider } from "./context/HomeContext";
+import { SocketProvider } from "./context/SocketContext";
+import { ChatProvider } from "./context/ChatContext";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <AuthProvider>
-        <HomeProvider>
-          <Home />
-        </HomeProvider>
+        {/* <SocketProvider> */}
+        <ChatProvider>
+          <HomeProvider>
+            <Home />
+          </HomeProvider>
+        </ChatProvider>
+        {/* </SocketProvider> */}
       </AuthProvider>
     ),
   },
