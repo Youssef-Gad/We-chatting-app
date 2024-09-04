@@ -4,17 +4,17 @@ import Sidebar from "./sidebar/Sidebar";
 import { useHome } from "../../context/HomeContext";
 import Settings from "../settings/Settings";
 import EmptyChat from "./messages area/EmptyChat";
-import Chat from "./messages area/Chat";
 import EditUser from "../user profile/EditUser";
+import ChatArea from "./messages area/ChatArea";
 
 function Home() {
   const { isLoading } = useAuth();
-  const { currentSection, activeChat } = useHome();
+  const { currentSection, openChat } = useHome();
 
   if (isLoading) return <Loader />;
   else
     return (
-      <div className="flex h-[100vh]">
+      <div className="flex h-[100vh] overflow-hidden">
         {currentSection === "home" ? (
           <Sidebar />
         ) : currentSection === "settings" ? (
@@ -24,7 +24,7 @@ function Home() {
         ) : (
           <div></div>
         )}
-        {!activeChat ? <EmptyChat /> : <Chat />}
+        {!openChat ? <EmptyChat /> : <ChatArea />}
       </div>
     );
 }

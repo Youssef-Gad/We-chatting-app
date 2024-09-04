@@ -4,10 +4,10 @@ const HomeContext = createContext();
 
 export function HomeProvider({ children }) {
   const [currentSection, setCurrentSection] = useState("home");
-  const [activeChat, setActiveChat] = useState(false);
+  const [openChat, setOpenChat] = useState(false);
   return (
     <HomeContext.Provider
-      value={{ currentSection, setCurrentSection, activeChat, setActiveChat }}
+      value={{ currentSection, setCurrentSection, openChat, setOpenChat }}
     >
       {children}
     </HomeContext.Provider>

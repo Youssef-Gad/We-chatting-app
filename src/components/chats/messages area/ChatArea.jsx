@@ -2,7 +2,7 @@ import ChatHeader from "./ChatHeader";
 import MessagesArea from "./MessagesArea";
 import TypingInput from "./TypingInput";
 
-function Chat() {
+function ChatArea() {
   return (
     <div className="flex flex-grow flex-col justify-between">
       <ChatHeader />
@@ -12,4 +12,4 @@ function Chat() {
   );
 }
 
-export default Chat;
+export default ChatArea;

@@ -4,7 +4,7 @@ import SidebarSearch from "./SidebarSearch";
 
 function Sidebar() {
   return (
-    <div className="w-[500px] border-r border-light-gray">
+    <div className="flex w-[500px] flex-col border-r border-light-gray">
       <SidebarHeader />
       <SidebarSearch />
       <ChatList />

@@ -54,10 +54,6 @@ function MessagesArea() {
         <Message message={message} key={i} />
       ))}
 
-      {messages.map((message, i) => (
-        <Message message={message} key={i} otheruser={true} />
-      ))}
-
       {showScrollToDown && (
         <div
           className="fixed bottom-[6rem] right-[0.8rem] cursor-pointer"
