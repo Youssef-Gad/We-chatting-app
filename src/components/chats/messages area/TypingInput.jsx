@@ -6,24 +6,32 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useOutsideClick from "../../../hooks/useOutsideClick";
 import { getCurrentTime } from "../../../helpers/helpers";
 import { useAuth } from "../../../context/AuthContext";
+import { useSocket } from "../../../context/SocketContext";
 
 function TypingInput() {
-  const inputRef = useRef(null);
   const buttonRef = useRef(null);
   const emojiPickerRef = useRef(null);
-  const { dispatch, otherUser } = useChat();
+  const { dispatch, otherUser, inputRef, roomId } = useChat();
   const [isOpen, setIsOpen] = useOutsideClick(emojiPickerRef, buttonRef);
   const [message, setMessage] = useState({});
   const { user } = useAuth();
+  const { socket } = useSocket();
 
   useEffect(() => {
     inputRef.current.focus();
-  }, []);
+  }, [inputRef]);
 
   function handleSendClick() {
     if (message.content.length) {
       dispatch({ type: "setMessages", payload: message });
       setMessage({ content: "" });
+
+      socket.emit("message", {
+        senderId: user._id,
+        receiverId: otherUser._id,
+        roomId: roomId,
+        content: message.content,
+      });
     }
   }
 
@@ -36,6 +44,13 @@ function TypingInput() {
       isSeen: false,
       isSent: true,
     });
+
+    socket.emit("message", {
+      senderId: user._id,
+      receiverId: otherUser._id,
+      roomId: roomId,
+      content: message.content,
+    });
     setIsOpen(false);
     inputRef.current.focus();
   }
@@ -44,6 +59,13 @@ function TypingInput() {
     if (e.key === "Enter" && message.content.length) {
       dispatch({ type: "setMessages", payload: message });
       setMessage({ content: "" });
+
+      socket.emit("message", {
+        senderId: user._id,
+        receiverId: otherUser._id,
+        roomId: roomId,
+        content: message.content,
+      });
     }
   }
 

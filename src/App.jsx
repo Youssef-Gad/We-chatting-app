@@ -24,13 +24,13 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <AuthProvider>
-        {/* <SocketProvider> */}
-        <ChatProvider>
-          <HomeProvider>
-            <Home />
-          </HomeProvider>
-        </ChatProvider>
-        {/* </SocketProvider> */}
+        <SocketProvider>
+          <ChatProvider>
+            <HomeProvider>
+              <Home />
+            </HomeProvider>
+          </ChatProvider>
+        </SocketProvider>
       </AuthProvider>
     ),
   },

@@ -24,7 +24,7 @@ function Home() {
         ) : (
           <div></div>
         )}
-        {!openChat ? <EmptyChat /> : <ChatArea />}
+        {openChat.length === 0 ? <EmptyChat /> : <ChatArea />}
       </div>
     );
 }

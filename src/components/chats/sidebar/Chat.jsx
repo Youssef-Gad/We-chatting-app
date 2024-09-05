@@ -2,11 +2,14 @@ import { useHome } from "../../../context/HomeContext";
 import { useAuth } from "../../../context/AuthContext";
 import { useChat } from "../../../context/ChatContext";
 import { useEffect } from "react";
+import { useSocket } from "../../../context/SocketContext";
 
 function Chat({ chat }) {
-  const { setOpenChat } = useHome();
+  const { setOpenChat, openChat } = useHome();
   const { user } = useAuth();
-  const { dispatch, otherUser } = useChat();
+  const { dispatch, otherUser, inputRef, setRoomId } = useChat();
+  const { socket } = useSocket();
+  const { roomId } = useChat();
 
   useEffect(() => {
     dispatch({
@@ -18,13 +21,23 @@ function Chat({ chat }) {
   const { firstName, lastName, photo } = otherUser;
 
   async function handleOnChatClick() {
-    setOpenChat(true);
+    socket.emit("join_create_room", {
+      senderId: user._id,
+      receiverId: otherUser._id,
+      roomId,
+    });
+    socket.on("room_created", (roomInfo) => {
+      setRoomId(roomInfo._id);
+    });
+
+    setOpenChat(chat._id);
     dispatch({ type: "setActiveChatId", payload: chat._id });
+    inputRef?.current?.focus();
   }
 
   return (
     <div
-      className="flex cursor-pointer justify-between rounded-md p-5 hover:bg-[#eeeeee86]"
+      className={`${openChat === chat._id ? "border-r-2 border-primary bg-[#eefff7]" : "hover:bg-[#eeeeee86]"} flex cursor-pointer justify-between p-5`}
       onClick={handleOnChatClick}
     >
       <div className="flex gap-6">

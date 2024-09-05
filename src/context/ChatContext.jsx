@@ -1,5 +1,16 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { getAllChatsOfUser } from "../services/apiChat";
+import { Socket } from "socket.io-client";
+import { useSocket } from "./SocketContext";
+import { getCurrentTime } from "../helpers/helpers";
+import { useAuth } from "./AuthContext";
 
 const ChatContext = createContext();
 
@@ -36,6 +47,10 @@ function chatReducer(state, action) {
 export function ChatProvider({ children }) {
   const [{ otherUser, messages, isLoading, chats, activeChatId }, dispatch] =
     useReducer(chatReducer, initialState);
+  const inputRef = useRef(null);
+  const [roomId, setRoomId] = useState(null);
+  const { socket } = useSocket();
+  const { user } = useAuth();
 
   useEffect(() => {
     async function fetchChats() {
@@ -54,9 +69,39 @@ export function ChatProvider({ children }) {
     fetchChats();
   }, []);
 
+  useEffect(() => {
+    socket.on("message", (messageData) => {
+      if (messageData.senderId !== user._id) {
+        console.log(messageData);
+
+        dispatch({
+          type: "setMessages",
+          payload: {
+            content: messageData.content,
+            sentAt: getCurrentTime(),
+            sender: messageData.senderId,
+            receiver: messageData.receiverId,
+            isSeen: false,
+            isSent: true,
+          },
+        });
+      }
+    });
+  }, [socket, user]);
+
   return (
     <ChatContext.Provider
-      value={{ otherUser, messages, isLoading, chats, activeChatId, dispatch }}
+      value={{
+        otherUser,
+        messages,
+        isLoading,
+        chats,
+        activeChatId,
+        dispatch,
+        inputRef,
+        roomId,
+        setRoomId,
+      }}
     >
       {children}
     </ChatContext.Provider>

@@ -11,7 +11,9 @@ export function SocketProvider({ children }) {
   if (user._id) socket.emit("connect_user", user._id);
 
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={{ socket }}>
+      {children}
+    </SocketContext.Provider>
   );
 }
 
