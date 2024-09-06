@@ -11,7 +11,7 @@ import { useSocket } from "../../../context/SocketContext";
 function TypingInput() {
   const buttonRef = useRef(null);
   const emojiPickerRef = useRef(null);
-  const { dispatch, otherUser, inputRef, roomId } = useChat();
+  const { dispatch, otherUser, inputRef, activeChatId } = useChat();
   const [isOpen, setIsOpen] = useOutsideClick(emojiPickerRef, buttonRef);
   const [message, setMessage] = useState({});
   const { user } = useAuth();
@@ -29,7 +29,7 @@ function TypingInput() {
       socket.emit("message", {
         senderId: user._id,
         receiverId: otherUser._id,
-        roomId: roomId,
+        roomId: activeChatId,
         content: message.content,
       });
     }
@@ -48,7 +48,7 @@ function TypingInput() {
     socket.emit("message", {
       senderId: user._id,
       receiverId: otherUser._id,
-      roomId: roomId,
+      roomId: activeChatId,
       content: message.content,
     });
     setIsOpen(false);
@@ -63,7 +63,7 @@ function TypingInput() {
       socket.emit("message", {
         senderId: user._id,
         receiverId: otherUser._id,
-        roomId: roomId,
+        roomId: activeChatId,
         content: message.content,
       });
     }

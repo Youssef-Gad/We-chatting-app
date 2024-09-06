@@ -4,10 +4,8 @@ import {
   useEffect,
   useReducer,
   useRef,
-  useState,
 } from "react";
 import { getAllChatsOfUser } from "../services/apiChat";
-import { Socket } from "socket.io-client";
 import { useSocket } from "./SocketContext";
 import { getCurrentTime } from "../helpers/helpers";
 import { useAuth } from "./AuthContext";
@@ -18,7 +16,7 @@ const initialState = {
   messages: [],
   chats: [],
   otherUser: {},
-  activeChatId: "",
+  activeChatId: null,
   isLoading: false,
 };
 
@@ -48,7 +46,6 @@ export function ChatProvider({ children }) {
   const [{ otherUser, messages, isLoading, chats, activeChatId }, dispatch] =
     useReducer(chatReducer, initialState);
   const inputRef = useRef(null);
-  const [roomId, setRoomId] = useState(null);
   const { socket } = useSocket();
   const { user } = useAuth();
 
@@ -99,8 +96,6 @@ export function ChatProvider({ children }) {
         activeChatId,
         dispatch,
         inputRef,
-        roomId,
-        setRoomId,
       }}
     >
       {children}

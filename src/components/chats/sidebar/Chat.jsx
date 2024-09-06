@@ -7,9 +7,8 @@ import { useSocket } from "../../../context/SocketContext";
 function Chat({ chat }) {
   const { setOpenChat, openChat } = useHome();
   const { user } = useAuth();
-  const { dispatch, otherUser, inputRef, setRoomId } = useChat();
+  const { dispatch, otherUser, inputRef } = useChat();
   const { socket } = useSocket();
-  const { roomId } = useChat();
 
   useEffect(() => {
     dispatch({
@@ -21,17 +20,23 @@ function Chat({ chat }) {
   const { firstName, lastName, photo } = otherUser;
 
   async function handleOnChatClick() {
+    dispatch({ type: "setActiveChatId", payload: chat._id });
+    console.log({
+      senderId: user._id,
+      receiverId: otherUser._id,
+      roomId: chat._id,
+    });
+
     socket.emit("join_create_room", {
       senderId: user._id,
       receiverId: otherUser._id,
-      roomId,
+      roomId: chat._id,
     });
     socket.on("room_created", (roomInfo) => {
-      setRoomId(roomInfo._id);
+      console.log(roomInfo);
     });
 
     setOpenChat(chat._id);
-    dispatch({ type: "setActiveChatId", payload: chat._id });
     inputRef?.current?.focus();
   }
 
