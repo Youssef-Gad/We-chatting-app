@@ -20,7 +20,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .file-input {
-  @apply w-[50%] rounded-md border border-light-gray bg-white px-4 py-2 text-gray;
+  @apply rounded-md border border-light-gray bg-white px-4 py-2 text-gray sm:w-[50%];
 }
 
 .file-input::file-selector-button {
@@ -28,31 +28,15 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .activation-num {
-  @apply h-12 w-12 rounded-lg border-2 border-gray text-center text-xl font-bold text-dark-gray outline-none focus:border-primary;
+  @apply h-10 w-10 rounded-lg border-2 border-gray text-center text-xl font-bold text-dark-gray outline-none focus:border-primary sm:h-12 sm:w-12;
 }
 
 .login-container {
-  height: 130vh;
-  background-color: #e9ecef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply flex h-[110vh] items-center justify-center bg-[#e9ecef] sm:h-[130vh];
 }
 
 .login-form {
-  padding: 4rem;
-  background-color: #fff;
-  width: 600px;
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: 10 10 10 10 black;
-}
-
-.hi {
-  font-size: 36px;
-  font-weight: bold;
-  color: #39455a;
-  margin-bottom: 0.5rem;
+  @apply w-[340px] rounded-lg bg-white p-10 text-center shadow-md sm:w-[600px];
 }
 
 ::-webkit-scrollbar {

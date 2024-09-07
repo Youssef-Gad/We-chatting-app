@@ -49,7 +49,7 @@ function SidebarSearch() {
         )}
       </form>
       {searchedUsers.length > 0 && (
-        <div className="absolute top-[9rem] ml-5 max-h-[20rem] w-[28.5rem] overflow-y-scroll rounded-md bg-light-gray p-5">
+        <div className="absolute top-[9rem] ml-5 max-h-[20rem] w-[21rem] space-y-5 overflow-y-scroll rounded-md bg-light-gray p-5 sm:w-[28.5rem]">
           {searchedUsers.map((user, i) => (
             <div key={i} className="flex items-center gap-5">
               <img

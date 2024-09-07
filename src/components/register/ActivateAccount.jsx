@@ -29,9 +29,9 @@ function ActivateAccount() {
   }, [seconds]);
 
   return (
-    <div className="h-[100vh] bg-light-gray">
+    <div className="h-[110vh] bg-light-gray sm:h-[100vh]">
       <div className="flex flex-col items-center justify-center py-10">
-        <div className="mx-auto max-w-2xl bg-white">
+        <div className="mx-auto max-w-[22rem] bg-white sm:max-w-2xl">
           <div className="flex h-[200px] w-full flex-col items-center justify-center gap-5 bg-primary text-white">
             <div className="flex items-center gap-3">
               <div className="h-[1px] w-10 bg-white"></div>
@@ -42,12 +42,12 @@ function ActivateAccount() {
               <div className="text-center text-sm font-normal tracking-widest sm:text-xl">
                 THANKS FOR SIGNING UP!
               </div>
-              <div className="text-xl font-bold capitalize tracking-wider sm:text-3xl">
+              <div className="text-lg font-bold capitalize tracking-wider sm:text-3xl">
                 Check your E-mail Address
               </div>
             </div>
           </div>
-          <div className="my-8 px-10">
+          <div className="my-8 px-6 sm:px-10">
             <p className="text-gray-600 mt-4 leading-loose">
               This passcode will only be valid for the next
               <span className="font-bold"> 5 minutes</span> Please introduce the{" "}
@@ -63,13 +63,13 @@ function ActivateAccount() {
                 <ActivationInputs />
               </div>
               <div className="mt-6 flex items-center justify-center gap-3">
-                <button className="transform rounded-lg bg-primary px-6 py-2 text-sm font-bold capitalize text-white transition-colors duration-150 hover:bg-dark-primary focus:outline-none">
+                <button className="rounded-lg bg-primary px-2 py-3 text-xs font-bold capitalize text-white transition-colors duration-150 hover:bg-dark-primary focus:outline-none sm:px-6 sm:py-2 sm:text-sm">
                   Verify Code
                 </button>
                 <button
                   disabled={seconds > 0}
                   onClick={handleResendActivationCode}
-                  className="transform rounded-lg border-2 border-primary px-6 py-2 text-sm font-bold capitalize transition-colors duration-150 hover:bg-dark-primary hover:text-white focus:outline-none disabled:border-none disabled:bg-warning disabled:text-white"
+                  className="rounded-lg border-2 border-primary px-2 py-3 text-xs font-bold capitalize transition-colors duration-150 hover:bg-dark-primary hover:text-white focus:outline-none disabled:border-none disabled:bg-warning disabled:text-white sm:px-6 sm:py-2 sm:text-sm"
                 >
                   Resend Activation Code
                 </button>

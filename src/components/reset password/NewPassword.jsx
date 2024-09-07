@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { redirect, useActionData, useFetcher } from "react-router-dom";
+import { redirect, useFetcher } from "react-router-dom";
 import { resetPassword } from "../../services/apiAuth";
 import toast from "react-hot-toast";
 
@@ -45,13 +45,13 @@ function NewPassword() {
           {showPassword ? (
             <FontAwesomeIcon
               icon={faEyeSlash}
-              className="absolute right-5 top-[2.6rem] cursor-pointer text-xl text-gray"
+              className="absolute right-5 top-[2.4rem] cursor-pointer text-xl text-gray"
               onClick={() => setShowPassword((s) => !s)}
             />
           ) : (
             <FontAwesomeIcon
               icon={faEye}
-              className="absolute right-5 top-[2.6rem] cursor-pointer text-xl text-gray"
+              className="absolute right-5 top-[2.4rem] cursor-pointer text-xl text-gray"
               onClick={() => setShowPassword((s) => !s)}
             />
           )}

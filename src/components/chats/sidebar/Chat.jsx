@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useSocket } from "../../../context/SocketContext";
 
 function Chat({ chat }) {
-  const { setOpenChat, openChat } = useHome();
+  const { setOpenChat, openChat, setOpenChatMobile } = useHome();
   const { user } = useAuth();
   const { dispatch, otherUser, inputRef, setRoomId } = useChat();
   const { socket } = useSocket();
@@ -21,16 +21,17 @@ function Chat({ chat }) {
   const { firstName, lastName, photo } = otherUser;
 
   async function handleOnChatClick() {
-    socket.emit("join_create_room", {
-      senderId: user._id,
-      receiverId: otherUser._id,
-      roomId,
-    });
-    socket.on("room_created", (roomInfo) => {
-      setRoomId(roomInfo._id);
-    });
+    // socket.emit("join_create_room", {
+    //   senderId: user._id,
+    //   receiverId: otherUser._id,
+    //   roomId,
+    // });
+    // socket.on("room_created", (roomInfo) => {
+    //   setRoomId(roomInfo._id);
+    // });
 
     setOpenChat(chat._id);
+    setOpenChatMobile(true);
     dispatch({ type: "setActiveChatId", payload: chat._id });
     inputRef?.current?.focus();
   }
@@ -41,9 +42,13 @@ function Chat({ chat }) {
       onClick={handleOnChatClick}
     >
       <div className="flex gap-6">
-        <img src={photo} alt="user" className="h-14 w-14 rounded-full" />
+        <img
+          src={photo}
+          alt="user"
+          className="h-12 w-12 rounded-full sm:h-14 sm:w-14"
+        />
         <div className="flex flex-col gap-1">
-          <p className="text-xl font-semibold text-dark-gray">
+          <p className="ext-lg font-semibold text-dark-gray sm:text-xl">
             {firstName} {lastName}
           </p>
           <p className="text-gray">Last Message</p>

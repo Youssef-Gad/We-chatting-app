@@ -7,7 +7,6 @@ import {
   useState,
 } from "react";
 import { getAllChatsOfUser } from "../services/apiChat";
-import { Socket } from "socket.io-client";
 import { useSocket } from "./SocketContext";
 import { getCurrentTime } from "../helpers/helpers";
 import { useAuth } from "./AuthContext";
