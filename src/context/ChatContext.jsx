@@ -54,7 +54,6 @@ export function ChatProvider({ children }) {
       dispatch({ type: "setIsLoading", payload: true });
       try {
         const res = await getAllChatsOfUser();
-        console.log(res);
 
         if (res.status === "Success") {
           dispatch({ type: "setChats", payload: res.chats });
@@ -72,18 +71,12 @@ export function ChatProvider({ children }) {
     socket.on("message", (messageData) => {
       if (messageData.senderId !== user._id) {
         console.log(messageData);
-
-        dispatch({
-          type: "setMessages",
-          payload: {
-            content: messageData.content,
-            sentAt: getCurrentTime(),
-            sender: messageData.senderId,
-            receiver: messageData.receiverId,
-            isSeen: false,
-            isSent: true,
-          },
+        socket.emit("message_delivered", {
+          roomId: messageData.roomId,
+          messageId: messageData._id,
         });
+
+        dispatch({ type: "setMessages", payload: messageData });
       }
     });
   }, [socket, user]);
