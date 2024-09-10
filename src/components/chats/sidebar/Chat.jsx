@@ -16,7 +16,6 @@ function Chat({ chat }) {
       payload: chat.user,
     });
   }, [chat.user, dispatch]);
-  // console.log(otherUser);
 
   const { firstName, lastName, photo } = otherUser;
 

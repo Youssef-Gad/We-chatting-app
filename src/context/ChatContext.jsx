@@ -84,12 +84,13 @@ export function ChatProvider({ children }) {
     socket.on("message", (messageData) => {
       if (messageData.sender !== user._id) {
         // console.log(messageData);
-
-        socket.emit("message_delivered", {
-          roomId: messageData.roomId,
-          messageId: messageData._id,
-          receiverId: otherUser._id,
-        });
+        if (otherUser._id) {
+          socket.emit("message_delivered", {
+            roomId: messageData.roomId,
+            messageId: messageData._id,
+            receiverId: otherUser._id,
+          });
+        }
 
         dispatch({ type: "setMessages", payload: messageData });
       }
