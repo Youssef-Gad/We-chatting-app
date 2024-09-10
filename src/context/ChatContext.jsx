@@ -68,6 +68,12 @@ export function ChatProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    socket.on("message_delivered", (messageData) => {
+      if (messageData.sender === user._id) {
+        console.log(messageData);
+      }
+    });
+
     socket.on("message", (messageData) => {
       if (messageData.sender !== user._id) {
         console.log(messageData);
