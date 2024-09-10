@@ -27,10 +27,13 @@ function chatReducer(state, action) {
       return { ...state, messages: [...state.messages, action.payload] };
     case "updateMessages":
       const updatedMessages = state.messages.map((message) => {
-        // console.log(message, action.payload);
+        console.log(message, action.payload);
 
         if (message._id === action.payload._id)
-          return { ...action.payload.message };
+          return {
+            ...message,
+            isDelivered: action.payload.message.isDelivered,
+          };
         else return message;
       });
       console.log(updatedMessages);
@@ -102,7 +105,7 @@ export function ChatProvider({ children }) {
         });
       }
     });
-  }, [socket, user, otherUser]);
+  }, [socket, user._id, otherUser._id]);
 
   return (
     <ChatContext.Provider
