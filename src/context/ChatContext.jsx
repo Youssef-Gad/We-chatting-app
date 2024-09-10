@@ -7,7 +7,6 @@ import {
 } from "react";
 import { getAllChatsOfUser } from "../services/apiChat";
 import { useSocket } from "./SocketContext";
-import { getCurrentTime } from "../helpers/helpers";
 import { useAuth } from "./AuthContext";
 
 const ChatContext = createContext();
@@ -26,6 +25,13 @@ function chatReducer(state, action) {
       return { ...state, messages: [...action.payload] };
     case "setMessages":
       return { ...state, messages: [...state.messages, action.payload] };
+    case "updateMessages":
+      const updatedMessages = state.messages.map((message) =>
+        message._id === action.payload._id
+          ? { ...action.payload.message }
+          : message,
+      );
+      return { ...state, messages: updatedMessages };
     case "setChats":
       return {
         ...state,
@@ -68,21 +74,27 @@ export function ChatProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    socket.on("message_delivered", (messageData) => {
-      if (messageData.sender === user._id) {
-        console.log(messageData);
-      }
-    });
-
     socket.on("message", (messageData) => {
       if (messageData.sender !== user._id) {
-        console.log(messageData);
+        // console.log(messageData);
+
         socket.emit("message_delivered", {
           roomId: messageData.roomId,
           messageId: messageData._id,
         });
 
         dispatch({ type: "setMessages", payload: messageData });
+      }
+    });
+
+    socket.on("message_delivered", (messageData) => {
+      if (messageData.sender === user._id) {
+        // console.log(messageData);
+        // console.log(user._id);
+        dispatch({
+          type: "updateMessages",
+          payload: { _id: messageData._id, message: messageData },
+        });
       }
     });
   }, [socket, user]);
