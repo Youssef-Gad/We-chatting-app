@@ -45,12 +45,6 @@ function TypingInput() {
       isSent: true,
     });
 
-    socket.emit("message", {
-      senderId: user._id,
-      receiverId: otherUser._id,
-      roomId: activeChatId,
-      content: message.content,
-    });
     setIsOpen(false);
     inputRef.current.focus();
   }
