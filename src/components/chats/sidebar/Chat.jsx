@@ -13,19 +13,20 @@ function Chat({ chat }) {
   useEffect(() => {
     dispatch({
       type: "setOtherUser",
-      payload: chat.user1._id !== user._id ? chat.user1 : chat.user2,
+      payload: chat.user,
     });
-  }, [chat.user1, chat.user2, dispatch, user._id]);
+  }, [chat.user, dispatch]);
+  // console.log(otherUser);
 
   const { firstName, lastName, photo } = otherUser;
 
   async function handleOnChatClick() {
     dispatch({ type: "setActiveChatId", payload: chat._id });
-    console.log({
-      senderId: user._id,
-      receiverId: otherUser._id,
-      roomId: chat._id,
-    });
+    // console.log({
+    //   senderId: user._id,
+    //   receiverId: otherUser._id,
+    //   roomId: chat._id,
+    // });
 
     socket.emit("join_create_room", {
       senderId: user._id,
@@ -33,7 +34,7 @@ function Chat({ chat }) {
       roomId: chat._id,
     });
     socket.on("room_created", (roomInfo) => {
-      console.log(roomInfo);
+      // console.log(roomInfo);
     });
 
     setOpenChat(chat._id);
