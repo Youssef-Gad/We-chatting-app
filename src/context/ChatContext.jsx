@@ -69,7 +69,7 @@ export function ChatProvider({ children }) {
 
   useEffect(() => {
     socket.on("message", (messageData) => {
-      if (messageData.senderId !== user._id) {
+      if (messageData.sender !== user._id) {
         console.log(messageData);
         socket.emit("message_delivered", {
           roomId: messageData.roomId,
