@@ -63,7 +63,7 @@ function MessagesArea() {
         >
           <FontAwesomeIcon
             icon={faChevronDown}
-            className="rounded-full bg-primary p-2 text-xl text-white"
+            className="rounded-full bg-[#005C4B] p-2 text-xl text-white"
           />
         </div>
       )}
