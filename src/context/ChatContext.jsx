@@ -27,13 +27,8 @@ function chatReducer(state, action) {
       return { ...state, messages: [...state.messages, action.payload] };
     case "updateMessages":
       const updatedMessages = state.messages.map((message) => {
-        console.log(message, action.payload);
-
         if (message._id === action.payload._id)
-          return {
-            ...message,
-            isDelivered: action.payload.message.isDelivered,
-          };
+          return { ...message, isDelivered: true };
         else return message;
       });
       console.log(updatedMessages);
@@ -84,29 +79,29 @@ export function ChatProvider({ children }) {
     socket.on("message", (messageData) => {
       if (messageData.sender !== user._id) {
         // console.log(messageData);
-        if (otherUser._id) {
-          socket.emit("message_delivered", {
-            roomId: messageData.roomId,
-            messageId: messageData._id,
-            receiverId: otherUser._id,
-          });
-        }
+        // if (otherUser._id) {
+        //   socket.emit("message_delivered", {
+        //     roomId: messageData.roomId,
+        //     messageId: messageData._id,
+        //     receiverId: otherUser._id,
+        //   });
+        // }
 
         dispatch({ type: "setMessages", payload: messageData });
       }
     });
 
-    socket.on("message_delivered", (messageData) => {
-      if (messageData.sender === user._id) {
-        console.log(messageData);
-        // console.log(user._id);
-        dispatch({
-          type: "updateMessages",
-          payload: { _id: messageData._id, message: messageData },
-        });
-      }
-    });
-  }, [socket, user._id, otherUser._id]);
+    // socket.on("message_delivered", (messageData) => {
+    //   if (messageData.sender === user._id) {
+    //     console.log(messageData);
+    //     // console.log(user._id);
+    //     // dispatch({
+    //     //   type: "updateMessages",
+    //     //   payload: { _id: messageData._id, message: messageData },
+    //     // });
+    //   }
+    // });
+  }, [socket, otherUser._id, user._id]);
 
   return (
     <ChatContext.Provider

@@ -94,6 +94,7 @@ function TypingInput() {
               receiver: otherUser._id,
               isSeen: false,
               isSent: true,
+              isDelivered: false,
             })
           }
           onKeyDown={handleKeyDown}
