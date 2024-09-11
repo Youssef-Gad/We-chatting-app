@@ -1,7 +1,6 @@
-import { faCheck, faCheckDouble } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../../context/AuthContext";
 import { convertTime } from "../../../helpers/helpers";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import IsDelivered from "./IsDelivered";
 
 function Message({ message }) {
   const { user } = useAuth();
@@ -20,15 +19,3 @@ function Message({ message }) {
 }
 
 export default Message;
-
-function IsDelivered({ message }) {
-  return (
-    <>
-      {message.isDelivered ? (
-        <FontAwesomeIcon icon={faCheckDouble} className="text-base" />
-      ) : (
-        <FontAwesomeIcon icon={faCheck} className="text-base" />
-      )}
-    </>
-  );
-}

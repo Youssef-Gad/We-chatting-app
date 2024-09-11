@@ -28,10 +28,13 @@ function chatReducer(state, action) {
     case "updateMessages":
       const updatedMessages = state.messages.map((message) => {
         if (message._id === action.payload._id)
-          return { ...message, isDelivered: true };
+          return {
+            ...message,
+            isDelivered: true,
+          };
         else return message;
       });
-      console.log(updatedMessages);
+      // console.log(updatedMessages);
 
       return { ...state, messages: updatedMessages };
     case "setChats":
@@ -78,12 +81,29 @@ export function ChatProvider({ children }) {
   useEffect(() => {
     const handleMessage = (messageData) => {
       dispatch({ type: "setMessages", payload: messageData });
+
+      socket.emit("message_delivered", {
+        senderId: messageData.sender,
+        roomId: messageData.roomId,
+        messageId: messageData._id,
+      });
     };
+
+    const handleIsDelivered = (messageData) => {
+      console.log("socket on delivered");
+
+      dispatch({
+        type: "updateMessages",
+        payload: { _id: messageData._id, message: messageData },
+      });
+    };
+    socket.on("message_delivered", handleIsDelivered);
 
     socket.on("message", handleMessage);
 
     return () => {
       socket.off("message", handleMessage);
+      socket.off("message_delivered", handleIsDelivered);
     };
   }, [socket, otherUser._id, user._id]);
 
