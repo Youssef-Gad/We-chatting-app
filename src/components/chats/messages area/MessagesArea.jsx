@@ -11,8 +11,6 @@ function MessagesArea() {
   const previousScrollTop = useRef(0);
   const [showScrollToDown, setShowScrollToDown] = useState(false);
 
-  // console.log(messages);
-
   function handleScrollToDown() {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });

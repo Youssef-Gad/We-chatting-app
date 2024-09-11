@@ -14,6 +14,7 @@ const ChatContext = createContext();
 const initialState = {
   messages: [],
   chats: [],
+  otherUsers: [],
   otherUser: {},
   activeChatId: null,
   isLoading: false,
@@ -54,6 +55,8 @@ function chatReducer(state, action) {
       };
     case "setOtherUser":
       return { ...state, otherUser: action.payload };
+    case "setOtherUsers":
+      return { ...state, otherUsers: [...state.otherUsers, action.payload] };
     case "setIsLoading":
       return { ...state, isLoading: action.payload };
     case "setActiveChatId":
@@ -78,6 +81,7 @@ export function ChatProvider({ children }) {
 
         if (res.status === "Success") {
           dispatch({ type: "setChats", payload: res.chats });
+          // dispatch({ type: "setOtherUsers", payload: res.user });
         }
       } catch (err) {
         console.error(err);

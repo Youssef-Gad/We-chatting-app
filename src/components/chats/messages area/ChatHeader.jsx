@@ -12,9 +12,11 @@ function ChatHeader() {
     async function getChat() {
       if (activeChatId) {
         const res = await getChatById(activeChatId);
+        console.log(res);
 
         if (res.status === "success")
           dispatch({ type: "loadMessages", payload: res.chat.messages });
+        // dispatch({ type: "setOtherUser", payload: chat.user });
       }
     }
     getChat();
