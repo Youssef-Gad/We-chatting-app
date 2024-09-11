@@ -4,16 +4,15 @@ import EmojiPicker from "emoji-picker-react";
 import { faFaceSmile } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useOutsideClick from "../../../hooks/useOutsideClick";
-import { getCurrentTime } from "../../../helpers/helpers";
 import { useAuth } from "../../../context/AuthContext";
 import { useSocket } from "../../../context/SocketContext";
 
 function TypingInput() {
   const buttonRef = useRef(null);
   const emojiPickerRef = useRef(null);
-  const { dispatch, otherUser, inputRef, activeChatId } = useChat();
+  const { otherUser, inputRef, activeChatId } = useChat();
   const [isOpen, setIsOpen] = useOutsideClick(emojiPickerRef, buttonRef);
-  const [message, setMessage] = useState({});
+  const [message, setMessage] = useState("");
   const { user } = useAuth();
   const { socket } = useSocket();
 
@@ -22,43 +21,33 @@ function TypingInput() {
   }, [inputRef]);
 
   function handleSendClick() {
-    if (message.content.length) {
-      dispatch({ type: "setMessages", payload: message });
-      setMessage({ content: "" });
+    if (message.length) {
+      setMessage("");
 
       socket.emit("message", {
         senderId: user._id,
         receiverId: otherUser._id,
         roomId: activeChatId,
-        content: message.content,
+        content: message,
       });
     }
   }
 
   function handleEmojiClick(e) {
-    setMessage({
-      content: message.content === undefined ? "" : message.content + e.emoji,
-      sentAt: getCurrentTime(),
-      sender: user._id,
-      receiver: otherUser._id,
-      isSeen: false,
-      isSent: true,
-    });
-
+    setMessage(message === undefined ? "" : message + e.emoji);
     setIsOpen(false);
     inputRef.current.focus();
   }
 
   function handleKeyDown(e) {
-    if (e.key === "Enter" && message.content.length) {
-      dispatch({ type: "setMessages", payload: message });
-      setMessage({ content: "" });
+    if (e.key === "Enter" && message.length) {
+      setMessage("");
 
       socket.emit("message", {
         senderId: user._id,
         receiverId: otherUser._id,
         roomId: activeChatId,
-        content: message.content,
+        content: message,
       });
     }
   }
@@ -85,21 +74,11 @@ function TypingInput() {
           type="text"
           placeholder="Type a message"
           className="w-full rounded-lg bg-[#eeeeee86] p-3 text-dark-gray outline-none"
-          value={message.content || ""}
-          onChange={(e) =>
-            setMessage({
-              content: e.target.value,
-              sentAt: getCurrentTime(),
-              sender: user._id,
-              receiver: otherUser._id,
-              isSeen: false,
-              isSent: true,
-              isDelivered: false,
-            })
-          }
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        {message.content && (
+        {message && (
           <img
             src="/message.svg"
             alt="icon"

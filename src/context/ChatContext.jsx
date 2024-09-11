@@ -34,7 +34,7 @@ function chatReducer(state, action) {
           };
         else return message;
       });
-      // console.log(updatedMessages);
+      console.log(updatedMessages);
 
       return { ...state, messages: updatedMessages };
     case "setChats":
@@ -80,6 +80,8 @@ export function ChatProvider({ children }) {
 
   useEffect(() => {
     const handleMessage = (messageData) => {
+      console.log("set messages");
+
       dispatch({ type: "setMessages", payload: messageData });
 
       socket.emit("message_delivered", {
@@ -90,12 +92,14 @@ export function ChatProvider({ children }) {
     };
 
     const handleIsDelivered = (messageData) => {
-      console.log("socket on delivered");
+      setTimeout(() => {
+        console.log("socket on delivered");
 
-      dispatch({
-        type: "updateMessages",
-        payload: { _id: messageData._id, message: messageData },
-      });
+        dispatch({
+          type: "updateMessages",
+          payload: { _id: messageData._id, message: messageData },
+        });
+      }, 300);
     };
     socket.on("message_delivered", handleIsDelivered);
 
