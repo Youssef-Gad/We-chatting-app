@@ -76,31 +76,15 @@ export function ChatProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    socket.on("message", (messageData) => {
-      if (messageData.sender !== user._id) {
-        // console.log(messageData);
-        // if (otherUser._id) {
-        //   socket.emit("message_delivered", {
-        //     roomId: messageData.roomId,
-        //     messageId: messageData._id,
-        //     receiverId: otherUser._id,
-        //   });
-        // }
+    const handleMessage = (messageData) => {
+      dispatch({ type: "setMessages", payload: messageData });
+    };
 
-        dispatch({ type: "setMessages", payload: messageData });
-      }
-    });
+    socket.on("message", handleMessage);
 
-    // socket.on("message_delivered", (messageData) => {
-    //   if (messageData.sender === user._id) {
-    //     console.log(messageData);
-    //     // console.log(user._id);
-    //     // dispatch({
-    //     //   type: "updateMessages",
-    //     //   payload: { _id: messageData._id, message: messageData },
-    //     // });
-    //   }
-    // });
+    return () => {
+      socket.off("message", handleMessage);
+    };
   }, [socket, otherUser._id, user._id]);
 
   return (
