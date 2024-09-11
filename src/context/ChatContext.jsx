@@ -25,8 +25,8 @@ function chatReducer(state, action) {
       return { ...state, messages: [...action.payload] };
     case "setMessages":
       return { ...state, messages: [...state.messages, action.payload] };
-    case "updateMessages":
-      const updatedMessages = state.messages.map((message) => {
+    case "updateMessagesIsDelivered":
+      const updatedMessagesIsDelivered = state.messages.map((message) => {
         if (message._id === action.payload._id)
           return {
             ...message,
@@ -35,7 +35,18 @@ function chatReducer(state, action) {
         else return message;
       });
 
-      return { ...state, messages: updatedMessages };
+      return { ...state, messages: updatedMessagesIsDelivered };
+    case "updateMessagesIsSeen":
+      const updatedMessagesIsSeen = state.messages.map((message) => {
+        if (message._id === action.payload._id)
+          return {
+            ...message,
+            isSeen: true,
+          };
+        else return message;
+      });
+
+      return { ...state, messages: updatedMessagesIsSeen };
     case "setChats":
       return {
         ...state,
@@ -93,23 +104,38 @@ export function ChatProvider({ children }) {
     };
 
     const handleIsDelivered = (messageData) => {
-      console.log("socket on delivered");
-
       dispatch({
-        type: "updateMessages",
+        type: "updateMessagesIsDelivered",
+        payload: { _id: messageData._id, message: messageData },
+      });
+
+      socket.emit("is_receiver_connected_to_room", {
+        receiverId: messageData.receiver,
+        roomId: messageData.roomId,
+        messageId: messageData._id,
+      });
+    };
+
+    const handleMessageIsSeen = (messageData) => {
+      dispatch({
+        type: "updateMessagesIsSeen",
         payload: { _id: messageData._id, message: messageData },
       });
     };
+
     socket.on("message_delivered", handleIsDelivered);
 
     socket.on("message", handleMessage);
 
     socket.on("message_is_saved", handleMessageIsSaved);
 
+    socket.on("message_seen", handleMessageIsSeen);
+
     return () => {
       socket.off("message", handleMessage);
       socket.off("message_delivered", handleIsDelivered);
       socket.off("message_is_saved", handleMessageIsSaved);
+      socket.off("message_seen", handleMessageIsSeen);
     };
   }, [socket, otherUser._id, user._id]);
 
