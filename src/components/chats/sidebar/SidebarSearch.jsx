@@ -12,7 +12,7 @@ function SidebarSearch() {
   const [searchText, setSearchText] = useState("");
   const [searchedUsers, setSearchedUsers] = useState([]);
   const { user } = useAuth();
-  const { dispatch, chats } = useChat();
+  const { dispatch, chats, otherUser } = useChat();
   const { socket } = useSocket();
 
   async function handleSubmit(e) {
@@ -52,7 +52,7 @@ function SidebarSearch() {
       if (!searchedObj.length) {
         socket.emit("join_create_room", {
           senderId: user._id,
-          receiverId: otherSearchedUser._id,
+          receiverId: otherUser._id,
           roomId: null,
         });
       }
