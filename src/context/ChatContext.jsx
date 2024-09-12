@@ -94,8 +94,6 @@ function chatReducer(state, action) {
       };
     case "setOtherUser":
       return { ...state, otherUser: action.payload };
-    case "setOtherUsers":
-      return { ...state, otherUsers: [...state.otherUsers, action.payload] };
     case "setIsLoading":
       return { ...state, isLoading: action.payload };
     case "setActiveChatId":

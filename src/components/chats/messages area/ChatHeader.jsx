@@ -12,12 +12,13 @@ function ChatHeader() {
   const { user } = useAuth();
   const { socket } = useSocket();
   const [isTyping, setIsTyping] = useState(false);
+  const [roomId, setRoomId] = useState("");
 
   useEffect(() => {
     socket.on("is_typing", (roomId) => {
       if (roomId === activeChatId) {
+        setRoomId(roomId);
         setIsTyping(true);
-
         setTimeout(() => {
           setIsTyping(false);
         }, 3000);
@@ -50,20 +51,16 @@ function ChatHeader() {
         {user._id === otherUser._id ? (
           <p className="flex flex-col text-lg font-semibold text-dark-gray">
             You
-            {isTyping && (
-              <span className="text-[0.9rem] font-normal italic tracking-wider">
-                typing...
-              </span>
-            )}
+            <span className="text-[0.9rem] font-normal italic tracking-wider">
+              {isTyping ? "typing..." : ""}
+            </span>
           </p>
         ) : (
           <p className="flex flex-col text-lg font-semibold text-dark-gray">
             {firstName} {lastName}
-            {isTyping && (
-              <span className="text-[0.9rem] font-normal italic tracking-wider">
-                typing...
-              </span>
-            )}
+            <span className="text-[0.9rem] font-normal italic tracking-wider">
+              {isTyping && activeChatId === roomId ? "typing..." : ""}
+            </span>
           </p>
         )}
       </div>
