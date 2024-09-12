@@ -24,6 +24,8 @@ function TypingInput() {
     if (message.length) {
       setMessage("");
 
+      console.log(otherUser);
+
       socket.emit("message", {
         senderId: user._id,
         receiverId: otherUser._id,

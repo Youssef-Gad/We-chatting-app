@@ -1,9 +1,9 @@
 import { useHome } from "../../../context/HomeContext";
 import { useAuth } from "../../../context/AuthContext";
 import { useChat } from "../../../context/ChatContext";
-import { useEffect } from "react";
 import { useSocket } from "../../../context/SocketContext";
 import { convertTime } from "../../../helpers/helpers";
+import { useEffect } from "react";
 
 function Chat({ chat }) {
   const { setOpenChat, openChat } = useHome();
@@ -11,15 +11,25 @@ function Chat({ chat }) {
   const { dispatch, inputRef } = useChat();
   const { socket } = useSocket();
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: "setOtherUser",
-  //     payload: chat.user,
-  //   });
-  // }, [chat.user, dispatch]);
+  useEffect(() => {
+    dispatch({
+      type: "setOtherUser",
+      payload: chat.user,
+    });
+  }, [chat.user, dispatch]);
+
+  console.log(chat);
 
   const { firstName, lastName, photo } = chat.user;
-  const { content, sentAt } = chat.lastSentMessage;
+
+  let content, sentAt;
+  if (chat.lastSentMessage === null) {
+    content = "Start Conversation";
+    sentAt = convertTime(chat.createdAt);
+  } else {
+    content = chat.lastSentMessage.content;
+    sentAt = convertTime(chat.lastSentMessage.sentAt);
+  }
 
   async function handleOnChatClick() {
     dispatch({ type: "setActiveChatId", payload: chat._id });
@@ -51,7 +61,7 @@ function Chat({ chat }) {
           <p className="text-gray">{content}</p>
         </div>
       </div>
-      <p className="font-semibold text-primary">{convertTime(sentAt)}</p>
+      <p className="font-semibold text-primary">{sentAt}</p>
     </div>
   );
 }
