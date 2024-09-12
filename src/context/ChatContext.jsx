@@ -14,7 +14,6 @@ const ChatContext = createContext();
 const initialState = {
   messages: [],
   chats: [],
-  otherUsers: [],
   otherUser: {},
   activeChatId: null,
   isLoading: false,
@@ -53,6 +52,46 @@ function chatReducer(state, action) {
         ...state,
         chats: action.payload,
       };
+    case "updateChats":
+      const findChat = state.chats.filter(
+        (chat) => chat._id === action.payload._id,
+      );
+      if (findChat.length) return { ...state };
+
+      return {
+        ...state,
+        chats: [action.payload, ...state.chats],
+      };
+    case "updateChatsStatus":
+      console.log(action.payload);
+
+      const updatedChatsStatus = state.chats.map((chat) => {
+        if (chat._id === action.payload.activeChatId) {
+          return {
+            ...chat,
+            lastSentMessage: {
+              ...chat.lastSentMessage,
+              content: action.payload.content,
+              sentAt: action.payload.sentAt,
+            },
+          };
+        } else return chat;
+      });
+
+      const firstChat = updatedChatsStatus.filter(
+        (chat) => chat._id === action.payload.activeChatId,
+      );
+
+      const chatAfterFilter = updatedChatsStatus.filter(
+        (chat) => chat._id !== action.payload.activeChatId,
+      );
+
+      chatAfterFilter.unshift(...firstChat);
+
+      return {
+        ...state,
+        chats: chatAfterFilter,
+      };
     case "setOtherUser":
       return { ...state, otherUser: action.payload };
     case "setOtherUsers":
@@ -81,7 +120,6 @@ export function ChatProvider({ children }) {
 
         if (res.status === "Success") {
           dispatch({ type: "setChats", payload: res.chats });
-          // dispatch({ type: "setOtherUsers", payload: res.user });
         }
       } catch (err) {
         console.error(err);
@@ -90,7 +128,7 @@ export function ChatProvider({ children }) {
       }
     }
     fetchChats();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const handleMessage = (messageData) => {

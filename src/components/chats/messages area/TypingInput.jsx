@@ -6,11 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useOutsideClick from "../../../hooks/useOutsideClick";
 import { useAuth } from "../../../context/AuthContext";
 import { useSocket } from "../../../context/SocketContext";
+import { getCurrentTime } from "../../../helpers/helpers";
 
 function TypingInput() {
   const buttonRef = useRef(null);
   const emojiPickerRef = useRef(null);
-  const { otherUser, inputRef, activeChatId } = useChat();
+  const { otherUser, inputRef, activeChatId, dispatch } = useChat();
   const [isOpen, setIsOpen] = useOutsideClick(emojiPickerRef, buttonRef);
   const [message, setMessage] = useState("");
   const { user } = useAuth();
@@ -24,13 +25,16 @@ function TypingInput() {
     if (message.length) {
       setMessage("");
 
-      console.log(otherUser);
-
       socket.emit("message", {
         senderId: user._id,
         receiverId: otherUser._id,
         roomId: activeChatId,
         content: message,
+      });
+
+      dispatch({
+        type: "updateChatsStatus",
+        payload: { activeChatId, content: message, sentAt: getCurrentTime() },
       });
     }
   }
@@ -50,6 +54,11 @@ function TypingInput() {
         receiverId: otherUser._id,
         roomId: activeChatId,
         content: message,
+      });
+
+      dispatch({
+        type: "updateChatsStatus",
+        payload: { activeChatId, content: message, sentAt: getCurrentTime() },
       });
     }
   }
@@ -77,7 +86,14 @@ function TypingInput() {
           placeholder="Type a message"
           className="w-full rounded-lg bg-[#eeeeee86] p-3 text-dark-gray outline-none"
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            socket.emit("im_typing", {
+              senderId: user._id,
+              receiverId: otherUser._id,
+              roomId: activeChatId,
+            });
+          }}
           onKeyDown={handleKeyDown}
         />
         {message && (

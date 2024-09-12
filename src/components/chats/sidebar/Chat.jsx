@@ -8,19 +8,15 @@ import { useEffect } from "react";
 function Chat({ chat }) {
   const { setOpenChat, openChat } = useHome();
   const { user } = useAuth();
-  const { dispatch, inputRef } = useChat();
+  const { dispatch, inputRef, otherUser } = useChat();
   const { socket } = useSocket();
 
-  useEffect(() => {
-    dispatch({
-      type: "setOtherUser",
-      payload: chat.user,
-    });
-  }, [chat.user, dispatch]);
-
-  console.log(chat);
-
-  const { firstName, lastName, photo } = chat.user;
+  let firstName, lastName, photo;
+  if (chat.user) {
+    firstName = chat.user.firstName;
+    lastName = chat.user.lastName;
+    photo = chat.user.photo;
+  }
 
   let content, sentAt;
   if (chat.lastSentMessage === null) {
@@ -33,14 +29,12 @@ function Chat({ chat }) {
 
   async function handleOnChatClick() {
     dispatch({ type: "setActiveChatId", payload: chat._id });
+    dispatch({ type: "setOtherUser", payload: chat.user });
 
     socket.emit("join_create_room", {
       senderId: user._id,
       receiverId: chat.user,
       roomId: chat._id,
-    });
-    socket.on("room_created", (roomInfo) => {
-      // console.log(roomInfo);
     });
 
     setOpenChat(chat._id);
@@ -55,9 +49,18 @@ function Chat({ chat }) {
       <div className="flex gap-6">
         <img src={photo} alt="user" className="h-14 w-14 rounded-full" />
         <div className="flex flex-col gap-1">
+          {/* {user._id === otherUser._id ? (
+            <p className="text-xl font-semibold text-dark-gray">You</p>
+          ) : (
+            <p className="text-xl font-semibold text-dark-gray">
+              {firstName} {lastName}
+            </p>
+          )} */}
+
           <p className="text-xl font-semibold text-dark-gray">
             {firstName} {lastName}
           </p>
+
           <p className="text-gray">{content}</p>
         </div>
       </div>

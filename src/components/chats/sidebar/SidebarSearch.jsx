@@ -1,6 +1,6 @@
 import { faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getUserByName } from "../../../services/apiUser";
 import SearchedUsers from "./searchedUsers";
 import { useSocket } from "../../../context/SocketContext";
@@ -12,7 +12,7 @@ function SidebarSearch() {
   const [searchText, setSearchText] = useState("");
   const [searchedUsers, setSearchedUsers] = useState([]);
   const { user } = useAuth();
-  const { dispatch } = useChat();
+  const { dispatch, chats } = useChat();
   const { socket } = useSocket();
 
   async function handleSubmit(e) {
@@ -27,23 +27,35 @@ function SidebarSearch() {
     }
   }
 
+  useEffect(() => {
+    socket.on("room_created", (roomInfo) => {
+      console.log("on room created");
+
+      dispatch({ type: "updateChats", payload: roomInfo });
+    });
+    return () => {
+      socket.off("message_seen", (roomInfo) => {
+        console.log("on room created");
+
+        dispatch({ type: "updateChats", payload: roomInfo });
+      });
+    };
+  }, [dispatch, socket]);
+
   async function OnClickSerachedUser(otherSearchedUser) {
     const res = await getAllChatsOfUser();
     if (res.status === "Success") {
-      dispatch({ type: "setChats", payload: res.chats });
-      // dispatch({ type: "setOtherUsers", payload: res.user });
+      const searchedObj = res.chats.filter(
+        (chatObj) => chatObj.user._id === otherSearchedUser._id,
+      );
 
-      console.log(otherSearchedUser);
-      console.log(res.chats);
-
-      const userFound = res.chats.includes(otherSearchedUser);
-      console.log(userFound);
-
-      socket.emit("join_create_room", {
-        senderId: user._id,
-        receiverId: otherSearchedUser._id,
-        roomId: null,
-      });
+      if (!searchedObj.length) {
+        socket.emit("join_create_room", {
+          senderId: user._id,
+          receiverId: otherSearchedUser._id,
+          roomId: null,
+        });
+      }
 
       setSearchedUsers([]);
     }
