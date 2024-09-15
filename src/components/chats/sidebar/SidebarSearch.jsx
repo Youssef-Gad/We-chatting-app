@@ -90,7 +90,7 @@ function SidebarSearch() {
         )}
       </form>
       {searchedUsers.length > 0 && (
-        <div className="absolute top-[9rem] ml-5 max-h-[20rem] w-[28.5rem] overflow-y-scroll rounded-md bg-[#eee] shadow-lg">
+        <div className="absolute top-[9rem] z-20 ml-5 max-h-[20rem] w-[28.5rem] overflow-y-scroll rounded-md bg-[#eee] shadow-lg">
           {searchedUsers.map((user, i) => (
             <SearchedUsers
               user={user}

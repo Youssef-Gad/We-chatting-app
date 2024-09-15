@@ -1,5 +1,3 @@
-import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useChat } from "../../../context/ChatContext";
 import { useEffect, useState } from "react";
 import { getChatById } from "../../../services/apiChat";
@@ -63,12 +61,6 @@ function ChatHeader() {
             </span>
           </p>
         )}
-      </div>
-      <div>
-        <FontAwesomeIcon
-          icon={faEllipsisVertical}
-          className="cursor-pointer rounded-full p-2 text-2xl text-dark-gray hover:bg-[#eeeeee86]"
-        />
       </div>
     </div>
   );

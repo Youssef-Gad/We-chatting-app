@@ -8,20 +8,39 @@ import { useEffect, useState } from "react";
 function Chat({ chat }) {
   const { setOpenChat, openChat } = useHome();
   const { user } = useAuth();
-  const { dispatch, inputRef } = useChat();
+  const { dispatch, inputRef, activeChatId, unreadMessages } = useChat();
   const { socket } = useSocket();
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [isOnline, setIsOnline] = useState(false);
+  const [flag, setFlag] = useState(0);
+  const [content, setContent] = useState("");
+  const [sentAt, setSentAt] = useState("");
+  const [unreadNum, setUnreadNum] = useState(0);
+
+  useEffect(() => {
+    if (activeChatId === null) {
+      const unreadCount = unreadMessages?.filter(
+        (roomId) => roomId === chat._id,
+      ).length;
+      setUnreadNum(unreadCount);
+    } else {
+      setUnreadNum(0);
+    }
+  }, [activeChatId, unreadMessages, chat._id]);
 
   useEffect(() => {
     const handleOnlineUsers = (data) => {
-      console.log(data);
-
-      data.forEach((user) => {
-        if (user === chat.user._id) setIsOnline(true);
-      });
+      if (data)
+        for (let i = 0; i < data.length; i++) {
+          if (data[i] === chat.user._id) {
+            setIsOnline(true);
+            setFlag(1);
+            return;
+          }
+        }
 
       setOnlineUsers(data);
+      if (flag) setIsOnline(false);
     };
 
     socket.on("update_online_users", handleOnlineUsers);
@@ -29,27 +48,28 @@ function Chat({ chat }) {
     return () => {
       socket.off("update_online_users", handleOnlineUsers);
     };
-  }, [socket, chat.user._id]);
+  }, [socket, chat.user._id, flag, onlineUsers]);
 
-  // useEffect(() => {
+  useEffect(() => {
+    if (onlineUsers.includes(chat.user._id)) setIsOnline(true);
+    else setIsOnline(false);
+  }, [onlineUsers, chat.user._id]);
 
-  //   // console.log(onlineUsers);
-  // }, [chat.user._id, onlineUsers]);
+  useEffect(() => {
+    if (chat.lastSentMessage === null) {
+      setContent("Start Conversation");
+      setSentAt(convertTime(chat.createdAt));
+    } else {
+      setContent(chat.lastSentMessage.content);
+      setSentAt(convertTime(chat.lastSentMessage.sentAt));
+    }
+  }, [chat.createdAt, chat.lastSentMessage]);
 
   let firstName, lastName, photo;
   if (chat.user) {
     firstName = chat.user.firstName;
     lastName = chat.user.lastName;
     photo = chat.user.photo;
-  }
-
-  let content, sentAt;
-  if (chat.lastSentMessage === null) {
-    content = "Start Conversation";
-    sentAt = convertTime(chat.createdAt);
-  } else {
-    content = chat.lastSentMessage.content;
-    sentAt = convertTime(chat.lastSentMessage.sentAt);
   }
 
   async function handleOnChatClick() {
@@ -87,10 +107,21 @@ function Chat({ chat }) {
             <div className="absolute right-[28.4rem] top-5 h-4 w-4 rounded-full bg-green-500"></div>
           )}
 
-          <p className="text-gray">{content}</p>
+          <p className="text-gray">
+            {content.slice(0, 18)}
+            {content.length > 18 ? "..." : ""}
+          </p>
         </div>
       </div>
-      <p className="font-semibold text-primary">{sentAt}</p>
+      <div className="flex flex-col items-center gap-1">
+        <p className="font-semibold text-primary">{sentAt}</p>
+
+        {unreadNum > 0 && (
+          <p className="flex h-3 w-3 items-center justify-center rounded-full bg-warning p-3 text-white">
+            {unreadNum}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

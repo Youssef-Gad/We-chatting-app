@@ -1,13 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-} from "react";
-import { getAllChatsOfUser } from "../services/apiChat";
-import { useSocket } from "./SocketContext";
-import { useAuth } from "./AuthContext";
+import { createContext, useContext, useReducer, useRef } from "react";
 
 const ChatContext = createContext();
 
@@ -17,6 +8,7 @@ const initialState = {
   otherUser: {},
   activeChatId: null,
   isLoading: false,
+  unreadMessages: [],
 };
 
 function chatReducer(state, action) {
@@ -63,8 +55,6 @@ function chatReducer(state, action) {
         chats: [action.payload, ...state.chats],
       };
     case "updateChatsStatus":
-      console.log(action.payload);
-
       const updatedChatsStatus = state.chats.map((chat) => {
         if (chat._id === action.payload.activeChatId) {
           return {
@@ -92,6 +82,11 @@ function chatReducer(state, action) {
         ...state,
         chats: chatAfterFilter,
       };
+    case "setUnreadMessages":
+      return {
+        ...state,
+        unreadMessages: [...state.unreadMessages, action.payload],
+      };
     case "setOtherUser":
       return { ...state, otherUser: action.payload };
     case "setIsLoading":
@@ -104,80 +99,11 @@ function chatReducer(state, action) {
 }
 
 export function ChatProvider({ children }) {
-  const [{ otherUser, messages, isLoading, chats, activeChatId }, dispatch] =
-    useReducer(chatReducer, initialState);
+  const [
+    { otherUser, messages, isLoading, chats, activeChatId, unreadMessages },
+    dispatch,
+  ] = useReducer(chatReducer, initialState);
   const inputRef = useRef(null);
-  const { socket } = useSocket();
-  const { user } = useAuth();
-
-  useEffect(() => {
-    async function fetchChats() {
-      dispatch({ type: "setIsLoading", payload: true });
-      try {
-        const res = await getAllChatsOfUser();
-
-        if (res.status === "Success") {
-          dispatch({ type: "setChats", payload: res.chats });
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        dispatch({ type: "setIsLoading", payload: false });
-      }
-    }
-    fetchChats();
-  }, [dispatch]);
-
-  useEffect(() => {
-    const handleMessage = (messageData) => {
-      dispatch({ type: "setMessages", payload: messageData });
-
-      socket.emit("message_delivered", {
-        senderId: messageData.sender,
-        roomId: messageData.roomId,
-        messageId: messageData._id,
-      });
-    };
-
-    const handleMessageIsSaved = (messageData) => {
-      dispatch({ type: "setMessages", payload: messageData });
-    };
-
-    const handleIsDelivered = (messageData) => {
-      dispatch({
-        type: "updateMessagesIsDelivered",
-        payload: { _id: messageData._id, message: messageData },
-      });
-
-      socket.emit("is_receiver_connected_to_room", {
-        receiverId: messageData.receiver,
-        roomId: messageData.roomId,
-        messageId: messageData._id,
-      });
-    };
-
-    const handleMessageIsSeen = (messageData) => {
-      dispatch({
-        type: "updateMessagesIsSeen",
-        payload: { _id: messageData._id, message: messageData },
-      });
-    };
-
-    socket.on("message_delivered", handleIsDelivered);
-
-    socket.on("message", handleMessage);
-
-    socket.on("message_is_saved", handleMessageIsSaved);
-
-    socket.on("message_seen", handleMessageIsSeen);
-
-    return () => {
-      socket.off("message", handleMessage);
-      socket.off("message_delivered", handleIsDelivered);
-      socket.off("message_is_saved", handleMessageIsSaved);
-      socket.off("message_seen", handleMessageIsSeen);
-    };
-  }, [socket, otherUser._id, user._id]);
 
   return (
     <ChatContext.Provider
@@ -189,6 +115,7 @@ export function ChatProvider({ children }) {
         activeChatId,
         dispatch,
         inputRef,
+        unreadMessages,
       }}
     >
       {children}
