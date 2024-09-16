@@ -25,6 +25,7 @@ function Chat({ chat }) {
       setUnreadNum(unreadCount);
     } else {
       setUnreadNum(0);
+      localStorage.setItem("unreadMessages", JSON.stringify([]));
     }
   }, [activeChatId, unreadMessages, chat._id]);
 
@@ -88,7 +89,7 @@ function Chat({ chat }) {
 
   return (
     <div
-      className={`${openChat === chat._id ? "border-r-2 border-primary bg-[#eefff7]" : "border-r-2 border-[#eeeeee86] hover:bg-[#eeeeee86]"} relative flex cursor-pointer justify-between p-5`}
+      className={`${openChat === chat._id ? "border-r-2 border-primary bg-[#EAF2F0]" : "border-r-2 border-[#eeeeee86] hover:bg-[#eeeeee86]"} relative flex cursor-pointer justify-between p-5`}
       onClick={handleOnChatClick}
     >
       <div className="flex gap-6">
@@ -113,7 +114,7 @@ function Chat({ chat }) {
           </p>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex flex-col items-end gap-1">
         <p className="font-semibold text-primary">{sentAt}</p>
 
         {unreadNum > 0 && (

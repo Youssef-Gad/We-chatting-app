@@ -8,7 +8,9 @@ const initialState = {
   otherUser: {},
   activeChatId: null,
   isLoading: false,
-  unreadMessages: [],
+  unreadMessages: localStorage.getItem("unreadMessages")
+    ? JSON.parse(localStorage.getItem("unreadMessages"))
+    : [],
 };
 
 function chatReducer(state, action) {
@@ -83,6 +85,10 @@ function chatReducer(state, action) {
         chats: chatAfterFilter,
       };
     case "setUnreadMessages":
+      localStorage.setItem(
+        "unreadMessages",
+        JSON.stringify([...state.unreadMessages, action.payload]),
+      );
       return {
         ...state,
         unreadMessages: [...state.unreadMessages, action.payload],

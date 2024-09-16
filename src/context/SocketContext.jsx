@@ -6,13 +6,17 @@ import { getAllChatsOfUser } from "../services/apiChat";
 import { getCurrentTime } from "../helpers/helpers";
 
 const SocketContext = createContext();
+const socket = io("http://localhost:3000");
 
 export function SocketProvider({ children }) {
   const { user } = useAuth();
   const { dispatch, activeChatId } = useChat();
-  const socket = io("http://localhost:3000");
 
-  if (user._id) socket.emit("connect_user", user._id);
+  useEffect(() => {
+    if (user._id) {
+      socket.emit("connect_user", user._id);
+    }
+  }, [user._id]);
 
   useEffect(() => {
     async function fetchChats() {
@@ -34,25 +38,29 @@ export function SocketProvider({ children }) {
 
   useEffect(() => {
     const handleMessage = (messageData) => {
-      if (messageData.roomId === activeChatId)
+      console.log(messageData);
+      if (messageData.room._id === activeChatId)
         dispatch({ type: "setMessages", payload: messageData });
 
       socket.emit("message_delivered", {
         senderId: messageData.sender,
-        roomId: messageData.roomId,
+        roomId: messageData.room._id,
         messageId: messageData._id,
       });
 
-      if (activeChatId === null)
+      if (activeChatId === null) {
         dispatch({
           type: "setUnreadMessages",
-          payload: messageData.roomId,
+          payload: messageData.room._id,
         });
+      }
+
+      // dispatch({ type: "updateChats", payload: messageData.room });
 
       dispatch({
         type: "updateChatsStatus",
         payload: {
-          activeChatId: messageData.roomId,
+          activeChatId: messageData.room._id,
           content: messageData.content,
           sentAt: getCurrentTime(),
         },
@@ -97,7 +105,7 @@ export function SocketProvider({ children }) {
       socket.off("message_is_saved", handleMessageIsSaved);
       socket.off("message_seen", handleMessageIsSeen);
     };
-  }, [activeChatId, socket, dispatch]);
+  }, [activeChatId, dispatch]);
 
   return (
     <SocketContext.Provider value={{ socket }}>

@@ -33,8 +33,6 @@ function SidebarSearch() {
     });
     return () => {
       socket.off("message_seen", (roomInfo) => {
-        console.log("on room created");
-
         dispatch({ type: "updateChats", payload: roomInfo });
       });
     };
