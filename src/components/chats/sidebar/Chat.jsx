@@ -8,26 +8,20 @@ import { useEffect, useState } from "react";
 function Chat({ chat }) {
   const { setOpenChat, openChat } = useHome();
   const { user } = useAuth();
-  const { dispatch, inputRef, activeChatId, unreadMessages } = useChat();
+  const { dispatch, inputRef } = useChat();
   const { socket } = useSocket();
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [isOnline, setIsOnline] = useState(false);
   const [flag, setFlag] = useState(0);
   const [content, setContent] = useState("");
   const [sentAt, setSentAt] = useState("");
-  const [unreadNum, setUnreadNum] = useState(0);
+  const [unreadMessage, setUnreadMessage] = useState(false);
 
   useEffect(() => {
-    if (activeChatId === null) {
-      const unreadCount = unreadMessages?.filter(
-        (roomId) => roomId === chat._id,
-      ).length;
-      setUnreadNum(unreadCount);
-    } else {
-      setUnreadNum(0);
-      localStorage.setItem("unreadMessages", JSON.stringify([]));
-    }
-  }, [activeChatId, unreadMessages, chat._id]);
+    console.log(chat);
+    if (chat.lastSentMessage.isSeen) setUnreadMessage(false);
+    else setUnreadMessage(true);
+  }, [chat, user._id]);
 
   useEffect(() => {
     const handleOnlineUsers = (data) => {
@@ -114,13 +108,11 @@ function Chat({ chat }) {
           </p>
         </div>
       </div>
-      <div className="flex flex-col items-end gap-1">
+      <div className="flex flex-col items-end gap-[0.7rem]">
         <p className="font-semibold text-primary">{sentAt}</p>
 
-        {unreadNum > 0 && (
-          <p className="flex h-3 w-3 items-center justify-center rounded-full bg-warning p-3 text-white">
-            {unreadNum}
-          </p>
+        {user._id === chat.lastSentMessage.receiver && unreadMessage && (
+          <div className="flex h-2 w-2 items-center justify-center rounded-full bg-warning p-2 text-white"></div>
         )}
       </div>
     </div>

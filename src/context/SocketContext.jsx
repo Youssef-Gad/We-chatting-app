@@ -38,7 +38,6 @@ export function SocketProvider({ children }) {
 
   useEffect(() => {
     const handleMessage = (messageData) => {
-      console.log(messageData);
       if (messageData.toBeSentRoom._id === activeChatId)
         dispatch({ type: "setMessages", payload: messageData });
 
@@ -48,12 +47,12 @@ export function SocketProvider({ children }) {
         messageId: messageData._id,
       });
 
-      if (activeChatId === null) {
-        dispatch({
-          type: "setUnreadMessages",
-          payload: messageData.toBeSentRoom._id,
-        });
-      }
+      // if (activeChatId === null) {
+      //   dispatch({
+      //     type: "setUnreadMessages",
+      //     payload: messageData.toBeSentRoom._id,
+      //   });
+      // }
 
       dispatch({ type: "updateChats", payload: messageData.toBeSentRoom });
 
@@ -77,11 +76,15 @@ export function SocketProvider({ children }) {
         payload: { _id: messageData._id, message: messageData },
       });
 
-      socket.emit("is_receiver_connected_to_room", {
-        receiverId: messageData.receiver,
-        roomId: messageData.roomId,
-        messageId: messageData._id,
-      });
+      if (activeChatId === messageData.roomId) {
+        console.log("here");
+
+        socket.emit("is_receiver_connected_to_room", {
+          receiverId: messageData.receiver,
+          roomId: messageData.roomId,
+          messageId: messageData._id,
+        });
+      }
     };
 
     const handleMessageIsSeen = (messageData) => {

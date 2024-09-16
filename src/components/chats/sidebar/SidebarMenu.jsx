@@ -4,16 +4,19 @@ import { logout } from "../../../services/apiAuth";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useHome } from "../../../context/HomeContext";
+import { useSocket } from "../../../context/SocketContext";
 
 function SidebarMenu({ menuRef }) {
   const navigate = useNavigate();
   const { setCurrentSection } = useHome();
+  const { socket } = useSocket();
 
   async function handleLogout() {
     const res = await logout();
     if (res.success) {
       toast.success(res.message);
       localStorage.clear();
+      socket.emit("disconnect_from_server");
       navigate("/login");
     }
   }
