@@ -39,28 +39,28 @@ export function SocketProvider({ children }) {
   useEffect(() => {
     const handleMessage = (messageData) => {
       console.log(messageData);
-      if (messageData.room._id === activeChatId)
+      if (messageData.toBeSentRoom._id === activeChatId)
         dispatch({ type: "setMessages", payload: messageData });
 
       socket.emit("message_delivered", {
         senderId: messageData.sender,
-        roomId: messageData.room._id,
+        roomId: messageData.toBeSentRoom._id,
         messageId: messageData._id,
       });
 
       if (activeChatId === null) {
         dispatch({
           type: "setUnreadMessages",
-          payload: messageData.room._id,
+          payload: messageData.toBeSentRoom._id,
         });
       }
 
-      // dispatch({ type: "updateChats", payload: messageData.room });
+      dispatch({ type: "updateChats", payload: messageData.toBeSentRoom });
 
       dispatch({
         type: "updateChatsStatus",
         payload: {
-          activeChatId: messageData.room._id,
+          activeChatId: messageData.toBeSentRoom._id,
           content: messageData.content,
           sentAt: getCurrentTime(),
         },
