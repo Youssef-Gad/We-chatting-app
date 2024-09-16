@@ -81,6 +81,7 @@ export function SocketProvider({ children }) {
           receiverId: messageData.receiver,
           roomId: messageData.roomId,
           messageId: messageData._id,
+          senderId: user._id,
         });
     };
 
@@ -107,7 +108,7 @@ export function SocketProvider({ children }) {
       socket.off("message_is_saved", handleMessageIsSaved);
       socket.off("message_seen", handleMessageIsSeen);
     };
-  }, [activeChatId, dispatch]);
+  }, [activeChatId, dispatch, user._id]);
 
   return (
     <SocketContext.Provider value={{ socket }}>
