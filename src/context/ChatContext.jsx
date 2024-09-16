@@ -8,9 +8,9 @@ const initialState = {
   otherUser: {},
   activeChatId: null,
   isLoading: false,
-  // unreadMessages: localStorage.getItem("unreadMessages")
-  //   ? JSON.parse(localStorage.getItem("unreadMessages"))
-  //   : [],
+  unreadMessages: localStorage.getItem("unreadMessages")
+    ? JSON.parse(localStorage.getItem("unreadMessages"))
+    : [],
 };
 
 function chatReducer(state, action) {
@@ -84,6 +84,15 @@ function chatReducer(state, action) {
         ...state,
         chats: chatAfterFilter,
       };
+    case "setUnreadMessages":
+      localStorage.setItem(
+        "unreadMessages",
+        JSON.stringify([...state.unreadMessages, action.payload]),
+      );
+      return {
+        ...state,
+        unreadMessages: [...state.unreadMessages, action.payload],
+      };
     case "setOtherUser":
       return { ...state, otherUser: action.payload };
     case "setIsLoading":
@@ -96,8 +105,10 @@ function chatReducer(state, action) {
 }
 
 export function ChatProvider({ children }) {
-  const [{ otherUser, messages, isLoading, chats, activeChatId }, dispatch] =
-    useReducer(chatReducer, initialState);
+  const [
+    { otherUser, messages, isLoading, chats, activeChatId, unreadMessages },
+    dispatch,
+  ] = useReducer(chatReducer, initialState);
   const inputRef = useRef(null);
 
   return (
@@ -110,6 +121,7 @@ export function ChatProvider({ children }) {
         activeChatId,
         dispatch,
         inputRef,
+        unreadMessages,
       }}
     >
       {children}

@@ -47,12 +47,12 @@ export function SocketProvider({ children }) {
         messageId: messageData._id,
       });
 
-      // if (activeChatId === null) {
-      //   dispatch({
-      //     type: "setUnreadMessages",
-      //     payload: messageData.toBeSentRoom._id,
-      //   });
-      // }
+      if (activeChatId === null) {
+        dispatch({
+          type: "setUnreadMessages",
+          payload: messageData.toBeSentRoom._id,
+        });
+      }
 
       dispatch({ type: "updateChats", payload: messageData.toBeSentRoom });
 
@@ -76,18 +76,17 @@ export function SocketProvider({ children }) {
         payload: { _id: messageData._id, message: messageData },
       });
 
-      if (activeChatId === messageData.roomId) {
-        console.log("here");
-
+      if (activeChatId === messageData.roomId)
         socket.emit("is_receiver_connected_to_room", {
           receiverId: messageData.receiver,
           roomId: messageData.roomId,
           messageId: messageData._id,
         });
-      }
     };
 
     const handleMessageIsSeen = (messageData) => {
+      console.log("seen");
+
       dispatch({
         type: "updateMessagesIsSeen",
         payload: { _id: messageData._id, message: messageData },
