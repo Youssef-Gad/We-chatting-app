@@ -6,11 +6,11 @@ import { useSocket } from "../../../context/SocketContext";
 
 function ChatHeader() {
   const { activeChatId, dispatch, otherUser } = useChat();
-  const { firstName, lastName, photo } = otherUser;
   const { user } = useAuth();
   const { socket } = useSocket();
   const [isTyping, setIsTyping] = useState(false);
   const [roomId, setRoomId] = useState("");
+  const { firstName, lastName, photo } = otherUser;
 
   useEffect(() => {
     socket.on("is_typing", (roomId) => {

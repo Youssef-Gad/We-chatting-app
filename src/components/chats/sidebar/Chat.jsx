@@ -16,6 +16,7 @@ function Chat({ chat }) {
   const [content, setContent] = useState("");
   const [sentAt, setSentAt] = useState("");
   const [unreadNum, setUnreadNum] = useState(0);
+  let firstName, lastName, photo;
 
   useEffect(() => {
     if (activeChatId === null) {
@@ -66,7 +67,6 @@ function Chat({ chat }) {
     }
   }, [chat.createdAt, chat.lastSentMessage]);
 
-  let firstName, lastName, photo;
   if (chat.user) {
     firstName = chat.user.firstName;
     lastName = chat.user.lastName;
@@ -116,13 +116,13 @@ function Chat({ chat }) {
       </div>
       <div className="flex flex-col items-end gap-1">
         <p className="font-semibold text-primary">{sentAt}</p>
-      </div>
 
-      {unreadNum > 0 && (
-        <p className="flex h-3 w-3 items-center justify-center rounded-full bg-warning p-3 text-white">
-          {unreadNum}
-        </p>
-      )}
+        {unreadNum > 0 && (
+          <p className="flex h-3 w-3 items-center justify-center rounded-full bg-warning p-3 text-white">
+            {unreadNum}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

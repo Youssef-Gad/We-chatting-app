@@ -86,8 +86,6 @@ export function SocketProvider({ children }) {
     };
 
     const handleMessageIsSeen = (messageData) => {
-      console.log("seen");
-
       dispatch({
         type: "updateMessagesIsSeen",
         payload: { _id: messageData._id, message: messageData },
