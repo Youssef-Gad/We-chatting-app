@@ -1,44 +1,95 @@
 import { useHome } from "../../../context/HomeContext";
 import { useAuth } from "../../../context/AuthContext";
 import { useChat } from "../../../context/ChatContext";
-import { useEffect } from "react";
 import { useSocket } from "../../../context/SocketContext";
+import { convertTime } from "../../../helpers/helpers";
+import { useEffect, useState } from "react";
 
 function Chat({ chat }) {
   const { setOpenChat, openChat, setOpenChatMobile } = useHome();
   const { user } = useAuth();
-  const { dispatch, otherUser, inputRef, setRoomId } = useChat();
+  const { dispatch, inputRef, activeChatId, unreadMessages } = useChat();
   const { socket } = useSocket();
-  const { roomId } = useChat();
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [isOnline, setIsOnline] = useState(false);
+  const [flag, setFlag] = useState(0);
+  const [content, setContent] = useState("");
+  const [sentAt, setSentAt] = useState("");
+  const [unreadNum, setUnreadNum] = useState(0);
+  let firstName, lastName, photo;
 
   useEffect(() => {
-    dispatch({
-      type: "setOtherUser",
-      payload: chat.user1._id !== user._id ? chat.user1 : chat.user2,
+    if (activeChatId === null) {
+      const unreadCount = unreadMessages?.filter(
+        (roomId) => roomId === chat._id,
+      ).length;
+      setUnreadNum(unreadCount);
+    } else {
+      setUnreadNum(0);
+      localStorage.setItem("unreadMessages", JSON.stringify([]));
+    }
+  }, [activeChatId, unreadMessages, chat._id]);
+
+  useEffect(() => {
+    const handleOnlineUsers = (data) => {
+      if (data)
+        for (let i = 0; i < data.length; i++) {
+          if (data[i] === chat.user._id) {
+            setIsOnline(true);
+            setFlag(1);
+            return;
+          }
+        }
+
+      setOnlineUsers(data);
+      if (flag) setIsOnline(false);
+    };
+
+    socket.on("update_online_users", handleOnlineUsers);
+
+    return () => {
+      socket.off("update_online_users", handleOnlineUsers);
+    };
+  }, [socket, chat.user._id, flag, onlineUsers]);
+
+  useEffect(() => {
+    if (onlineUsers.includes(chat.user._id)) setIsOnline(true);
+    else setIsOnline(false);
+  }, [onlineUsers, chat.user._id]);
+
+  useEffect(() => {
+    if (chat.lastSentMessage === null) {
+      setContent("Start Conversation");
+      setSentAt(convertTime(chat.createdAt));
+    } else {
+      setContent(chat.lastSentMessage.content);
+      setSentAt(convertTime(chat.lastSentMessage.sentAt));
+    }
+  }, [chat.createdAt, chat.lastSentMessage]);
+
+  if (chat.user) {
+    firstName = chat.user.firstName;
+    lastName = chat.user.lastName;
+    photo = chat.user.photo;
+  }
+
+   async function handleOnChatClick() {
+    dispatch({ type: "setActiveChatId", payload: chat._id });
+    dispatch({ type: "setOtherUser", payload: chat.user });
+
+    socket.emit("join_create_room", {
+      senderId: user._id,
+      receiverId: chat.user._id,
+      roomId: chat._id,
     });
-  }, [chat.user1, chat.user2, dispatch, user._id]);
-
-  const { firstName, lastName, photo } = otherUser;
-
-  async function handleOnChatClick() {
-    // socket.emit("join_create_room", {
-    //   senderId: user._id,
-    //   receiverId: otherUser._id,
-    //   roomId,
-    // });
-    // socket.on("room_created", (roomInfo) => {
-    //   setRoomId(roomInfo._id);
-    // });
 
     setOpenChat(chat._id);
-    setOpenChatMobile(true);
-    dispatch({ type: "setActiveChatId", payload: chat._id });
     inputRef?.current?.focus();
   }
 
   return (
     <div
-      className={`${openChat === chat._id ? "border-r-2 border-primary bg-[#eefff7]" : "hover:bg-[#eeeeee86]"} flex cursor-pointer justify-between p-5`}
+      className={`${openChat === chat._id ? "border-r-2 border-primary bg-[#EAF2F0]" : "border-r-2 border-[#eeeeee86] hover:bg-[#eeeeee86]"} relative flex cursor-pointer justify-between p-5`}
       onClick={handleOnChatClick}
     >
       <div className="flex gap-6">
@@ -48,13 +99,34 @@ function Chat({ chat }) {
           className="h-12 w-12 rounded-full sm:h-14 sm:w-14"
         />
         <div className="flex flex-col gap-1">
-          <p className="ext-lg font-semibold text-dark-gray sm:text-xl">
-            {firstName} {lastName}
+          {user._id === chat.user._id ? (
+            <p className="text-xl font-semibold text-dark-gray">
+              ({firstName} {lastName}) You
+            </p>
+          ) : (
+            <p className="text-xl font-semibold text-dark-gray">
+              {firstName} {lastName}
+            </p>
+          )}
+          {isOnline && (
+            <div className="absolute right-[28.4rem] top-5 h-4 w-4 rounded-full bg-green-500"></div>
+          )}
+
+          <p className="text-gray">
+            {content.slice(0, 18)}
+            {content.length > 18 ? "..." : ""}
           </p>
-          <p className="text-gray">Last Message</p>
         </div>
       </div>
-      <p className="font-semibold text-primary">Just now</p>
+      <div className="flex flex-col items-end gap-1">
+        <p className="font-semibold text-primary">{sentAt}</p>
+
+        {unreadNum > 0 && (
+          <p className="flex h-3 w-3 items-center justify-center rounded-full bg-warning p-3 text-white">
+            {unreadNum}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

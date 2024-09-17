@@ -1,9 +1,8 @@
 import { BASE_URL } from "../constants/constants";
 
-const token = localStorage.getItem("token");
-
 export async function getAllChatsOfUser() {
   try {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${BASE_URL}/chat`, {
       method: "GET",
       headers: {
@@ -21,6 +20,7 @@ export async function getAllChatsOfUser() {
 
 export async function getChatById(chatId) {
   try {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${BASE_URL}/chat/${chatId}`, {
       method: "GET",
       headers: {

@@ -13,7 +13,7 @@ function SidebarHeader() {
 
   return (
     <div className="relative flex items-center justify-between border-b border-light-gray px-5 py-4">
-      <p className="text-3xl font-semibold uppercase text-primary">wechat</p>
+      <p className="text-3xl font-semibold uppercase text-[#005C4B]">wechat</p>
       <div className="flex items-center gap-3">
         <img
           src={user.photo}

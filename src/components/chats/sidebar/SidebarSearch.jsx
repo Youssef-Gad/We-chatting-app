@@ -1,20 +1,59 @@
 import { faMagnifyingGlass, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getUserByName } from "../../../services/apiUser";
+import SearchedUsers from "./searchedUsers";
+import { useSocket } from "../../../context/SocketContext";
+import { useAuth } from "../../../context/AuthContext";
+import { useChat } from "../../../context/ChatContext";
+import { getAllChatsOfUser } from "../../../services/apiChat";
 
 function SidebarSearch() {
   const [searchText, setSearchText] = useState("");
   const [searchedUsers, setSearchedUsers] = useState([]);
+  const { user } = useAuth();
+  const { dispatch } = useChat();
+  const { socket } = useSocket();
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (searchText && searchText.length >= 3) {
       const res = await getUserByName(searchText);
+
       if (res.status === "success") {
         setSearchedUsers((users) => [...users, ...res.users]);
         setSearchText("");
       }
+    }
+  }
+
+  useEffect(() => {
+    socket.on("room_created", (roomInfo) => {
+      dispatch({ type: "updateChats", payload: roomInfo });
+    });
+    return () => {
+      socket.off("message_seen", (roomInfo) => {
+        dispatch({ type: "updateChats", payload: roomInfo });
+      });
+    };
+  }, [dispatch, socket]);
+
+  async function OnClickSerachedUser(otherSearchedUser) {
+    const res = await getAllChatsOfUser();
+    if (res.status === "Success") {
+      const searchedObj = res.chats.filter(
+        (chatObj) => chatObj.user._id === otherSearchedUser._id,
+      );
+
+      if (!searchedObj.length) {
+        socket.emit("join_create_room", {
+          senderId: user._id,
+          receiverId: otherSearchedUser._id,
+          roomId: null,
+        });
+      }
+
+      setSearchedUsers([]);
     }
   }
 
@@ -49,21 +88,13 @@ function SidebarSearch() {
         )}
       </form>
       {searchedUsers.length > 0 && (
-        <div className="absolute top-[9rem] ml-5 max-h-[20rem] w-[21rem] space-y-5 overflow-y-scroll rounded-md bg-light-gray p-5 sm:w-[28.5rem]">
+        <div className="absolute top-[9rem] z-20 ml-5 max-h-[20rem] w-[28.5rem] overflow-y-scroll rounded-md bg-[#eee] shadow-lg">
           {searchedUsers.map((user, i) => (
-            <div key={i} className="flex items-center gap-5">
-              <img
-                src={user.photo}
-                alt="user"
-                className="h-12 w-12 rounded-full"
-              />
-              <div className="flex flex-col gap-1">
-                <p className="font-semibold text-dark-gray">
-                  {user.firstName} {user.lastName}
-                </p>
-                <p className="text-dark-gray">{user.email}</p>
-              </div>
-            </div>
+            <SearchedUsers
+              user={user}
+              key={i}
+              onClick={() => OnClickSerachedUser(user)}
+            />
           ))}
         </div>
       )}

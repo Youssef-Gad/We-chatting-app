@@ -9,8 +9,8 @@ function ChatList() {
 
   return (
     <div className="overflow-y-scroll">
-      {chats.map((chat) => (
-        <Chat key={chat._id} chat={chat} />
+      {chats.map((chat, i) => (
+        <Chat key={i} chat={chat} />
       ))}
     </div>
   );

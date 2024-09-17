@@ -1,9 +1,10 @@
 import { BASE_URL } from "../constants/constants";
 
-const token = localStorage.getItem("token");
+
 
 export async function getUser() {
   try {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${BASE_URL}/user`, {
       method: "GET",
       headers: {
@@ -21,6 +22,7 @@ export async function getUser() {
 
 export async function updateUser(newData) {
   try {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${BASE_URL}/user`, {
       method: "PUT",
       headers: {
@@ -39,6 +41,7 @@ export async function updateUser(newData) {
 
 export async function deleteUser() {
   try {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${BASE_URL}/user`, {
       method: "DELETE",
       headers: {
@@ -56,6 +59,7 @@ export async function deleteUser() {
 
 export async function getUserByName(name) {
   try {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${BASE_URL}/user/search?name=${name}`, {
       method: "GET",
       headers: {

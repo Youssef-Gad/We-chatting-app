@@ -1,15 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
-import { getAllChatsOfUser } from "../services/apiChat";
-import { useSocket } from "./SocketContext";
-import { getCurrentTime } from "../helpers/helpers";
-import { useAuth } from "./AuthContext";
+import { createContext, useContext, useReducer, useRef } from "react";
 
 const ChatContext = createContext();
 
@@ -17,8 +6,11 @@ const initialState = {
   messages: [],
   chats: [],
   otherUser: {},
-  activeChatId: "",
+  activeChatId: null,
   isLoading: false,
+  unreadMessages: localStorage.getItem("unreadMessages")
+    ? JSON.parse(localStorage.getItem("unreadMessages"))
+    : [],
 };
 
 function chatReducer(state, action) {
@@ -27,10 +19,79 @@ function chatReducer(state, action) {
       return { ...state, messages: [...action.payload] };
     case "setMessages":
       return { ...state, messages: [...state.messages, action.payload] };
+    case "updateMessagesIsDelivered":
+      const updatedMessagesIsDelivered = state.messages.map((message) => {
+        if (message._id === action.payload._id)
+          return {
+            ...message,
+            isDelivered: true,
+          };
+        else return message;
+      });
+
+      return { ...state, messages: updatedMessagesIsDelivered };
+    case "updateMessagesIsSeen":
+      const updatedMessagesIsSeen = state.messages.map((message) => {
+        if (message._id === action.payload._id)
+          return {
+            ...message,
+            isSeen: true,
+          };
+        else return message;
+      });
+
+      return { ...state, messages: updatedMessagesIsSeen };
     case "setChats":
       return {
         ...state,
         chats: action.payload,
+      };
+    case "updateChats":
+      const findChat = state.chats.filter(
+        (chat) => chat._id === action.payload._id,
+      );
+      if (findChat.length) return { ...state };
+
+      return {
+        ...state,
+        chats: [action.payload, ...state.chats],
+      };
+    case "updateChatsStatus":
+      const updatedChatsStatus = state.chats.map((chat) => {
+        if (chat._id === action.payload.activeChatId) {
+          return {
+            ...chat,
+            lastSentMessage: {
+              ...chat.lastSentMessage,
+              content: action.payload.content,
+              sentAt: action.payload.sentAt,
+            },
+          };
+        } else return chat;
+      });
+
+      const firstChat = updatedChatsStatus.filter(
+        (chat) => chat._id === action.payload.activeChatId,
+      );
+
+      const chatAfterFilter = updatedChatsStatus.filter(
+        (chat) => chat._id !== action.payload.activeChatId,
+      );
+
+      chatAfterFilter.unshift(...firstChat);
+
+      return {
+        ...state,
+        chats: chatAfterFilter,
+      };
+    case "setUnreadMessages":
+      localStorage.setItem(
+        "unreadMessages",
+        JSON.stringify([...state.unreadMessages, action.payload]),
+      );
+      return {
+        ...state,
+        unreadMessages: [...state.unreadMessages, action.payload],
       };
     case "setOtherUser":
       return { ...state, otherUser: action.payload };
@@ -44,49 +105,11 @@ function chatReducer(state, action) {
 }
 
 export function ChatProvider({ children }) {
-  const [{ otherUser, messages, isLoading, chats, activeChatId }, dispatch] =
-    useReducer(chatReducer, initialState);
+  const [
+    { otherUser, messages, isLoading, chats, activeChatId, unreadMessages },
+    dispatch,
+  ] = useReducer(chatReducer, initialState);
   const inputRef = useRef(null);
-  const [roomId, setRoomId] = useState(null);
-  const { socket } = useSocket();
-  const { user } = useAuth();
-
-  useEffect(() => {
-    async function fetchChats() {
-      dispatch({ type: "setIsLoading", payload: true });
-      try {
-        const res = await getAllChatsOfUser();
-        if (res.status === "Success") {
-          dispatch({ type: "setChats", payload: res.chats });
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        dispatch({ type: "setIsLoading", payload: false });
-      }
-    }
-    fetchChats();
-  }, []);
-
-  useEffect(() => {
-    socket.on("message", (messageData) => {
-      if (messageData.senderId !== user._id) {
-        console.log(messageData);
-
-        dispatch({
-          type: "setMessages",
-          payload: {
-            content: messageData.content,
-            sentAt: getCurrentTime(),
-            sender: messageData.senderId,
-            receiver: messageData.receiverId,
-            isSeen: false,
-            isSent: true,
-          },
-        });
-      }
-    });
-  }, [socket, user]);
 
   return (
     <ChatContext.Provider
@@ -98,8 +121,7 @@ export function ChatProvider({ children }) {
         activeChatId,
         dispatch,
         inputRef,
-        roomId,
-        setRoomId,
+        unreadMessages,
       }}
     >
       {children}

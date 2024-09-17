@@ -7,15 +7,18 @@ import { useHome } from "../context/HomeContext";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/apiAuth";
 import toast from "react-hot-toast";
+import { useSocket } from "../context/SocketContext";
 
 function SectionsHeader({ to, sectionName }) {
   const { setCurrentSection } = useHome();
   const navigate = useNavigate();
+  const { socket } = useSocket();
 
   async function handleLogout() {
     const res = await logout();
     if (res.success) {
       toast.success(res.message);
+      socket.emit("disconnect_from_server");
       navigate("/login");
     }
   }
