@@ -10,12 +10,12 @@ function NewPasswordVerification() {
   const [showActivationCode, setShowActivationCode] = useState(false);
 
   return (
-    <div className="h-[100vh] bg-light-gray">
+    <div className="h-[110vh] bg-light-gray sm:h-[100vh]">
       {!showActivationCode ? (
         <EmailVerification setShowActivationCode={setShowActivationCode} />
       ) : (
         <div className="flex flex-col items-center justify-center py-10">
-          <div className="mx-auto max-w-2xl bg-white">
+          <div className="mx-auto max-w-[22rem] bg-white sm:max-w-2xl">
             <div className="flex h-[200px] w-full flex-col items-center justify-center gap-5 bg-primary text-white">
               <div className="flex items-center gap-3">
                 <div className="h-[1px] w-10 bg-white"></div>

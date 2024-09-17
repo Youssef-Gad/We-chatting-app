@@ -23,7 +23,7 @@ function LoginForm() {
       method="POST"
       className="login-form"
     >
-      <p className="hi">Hi ,welcome</p>
+      <p className="mb-2 text-3xl font-semibold sm:text-4xl">Hi ,welcome</p>
       <p className="mb-10">Enter your E-mail and Passward</p>
 
       <div className="flex flex-col gap-5">

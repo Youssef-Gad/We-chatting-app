@@ -6,7 +6,7 @@ import { convertTime } from "../../../helpers/helpers";
 import { useEffect, useState } from "react";
 
 function Chat({ chat }) {
-  const { setOpenChat, openChat } = useHome();
+  const { setOpenChat, openChat, setOpenChatMobile } = useHome();
   const { user } = useAuth();
   const { dispatch, inputRef, activeChatId, unreadMessages } = useChat();
   const { socket } = useSocket();
@@ -73,7 +73,7 @@ function Chat({ chat }) {
     photo = chat.user.photo;
   }
 
-  async function handleOnChatClick() {
+   async function handleOnChatClick() {
     dispatch({ type: "setActiveChatId", payload: chat._id });
     dispatch({ type: "setOtherUser", payload: chat.user });
 
@@ -93,7 +93,11 @@ function Chat({ chat }) {
       onClick={handleOnChatClick}
     >
       <div className="flex gap-6">
-        <img src={photo} alt="user" className="h-14 w-14 rounded-full" />
+        <img
+          src={photo}
+          alt="user"
+          className="h-12 w-12 rounded-full sm:h-14 sm:w-14"
+        />
         <div className="flex flex-col gap-1">
           {user._id === chat.user._id ? (
             <p className="text-xl font-semibold text-dark-gray">
