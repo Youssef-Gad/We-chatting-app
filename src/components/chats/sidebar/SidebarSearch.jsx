@@ -46,6 +46,12 @@ function SidebarSearch() {
       );
 
       if (!searchedObj.length) {
+        console.log({
+          senderId: user._id,
+          receiverId: otherSearchedUser._id,
+          roomId: null,
+        });
+
         socket.emit("join_create_room", {
           senderId: user._id,
           receiverId: otherSearchedUser._id,
@@ -88,7 +94,7 @@ function SidebarSearch() {
         )}
       </form>
       {searchedUsers.length > 0 && (
-        <div className="absolute top-[9rem] z-20 ml-5 max-h-[20rem] w-[28.5rem] overflow-y-scroll rounded-md bg-[#eee] shadow-lg">
+        <div className="absolute top-[9rem] z-20 ml-5 max-h-[20rem] min-w-[90%] overflow-y-scroll rounded-md bg-[#eee] shadow-lg sm:min-w-[28.5rem]">
           {searchedUsers.map((user, i) => (
             <SearchedUsers
               user={user}

@@ -6,11 +6,12 @@ import Settings from "../settings/Settings";
 import EmptyChat from "./messages area/EmptyChat";
 import EditUser from "../user profile/EditUser";
 import ChatArea from "./messages area/ChatArea";
-import ChatAreaMobile from "../mobile components/ChatAreaMobile";
+import { useChat } from "../../context/ChatContext";
 
 function Home() {
   const { isLoading } = useAuth();
-  const { currentSection, openChat, openChatMobile } = useHome();
+  const { currentSection } = useHome();
+  const { activeChatId } = useChat();
 
   if (isLoading) return <Loader />;
 
@@ -25,7 +26,7 @@ function Home() {
       ) : (
         <></>
       )}
-      {openChat.length === 0 ? <EmptyChat /> : <ChatArea />}
+      {activeChatId === null ? <EmptyChat /> : <ChatArea />}
     </div>
   );
 }

@@ -93,12 +93,16 @@ function chatReducer(state, action) {
         ...state,
         unreadMessages: [...state.unreadMessages, action.payload],
       };
+    case "deleteUnreadMessages":
+      return { ...state, unreadMessages: [] };
     case "setOtherUser":
       return { ...state, otherUser: action.payload };
     case "setIsLoading":
       return { ...state, isLoading: action.payload };
     case "setActiveChatId":
       return { ...state, activeChatId: action.payload };
+    case "deleteActiveChatId":
+      return { ...state, activeChatId: null };
     default:
       throw new Error(`Unknown action: ${action.type}`);
   }

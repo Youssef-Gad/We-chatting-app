@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import { getChatById } from "../../../services/apiChat";
 import { useAuth } from "../../../context/AuthContext";
 import { useSocket } from "../../../context/SocketContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-function ChatHeader() {
+function ChatHeader({ setIsLoading }) {
   const { activeChatId, dispatch, otherUser } = useChat();
   const { user } = useAuth();
   const { socket } = useSocket();
@@ -32,19 +34,34 @@ function ChatHeader() {
 
   useEffect(() => {
     async function getChat() {
-      if (activeChatId) {
-        const res = await getChatById(activeChatId);
+      setIsLoading(true);
+      try {
+        if (activeChatId) {
+          const res = await getChatById(activeChatId);
 
-        if (res.status === "success")
-          dispatch({ type: "loadMessages", payload: res.chat.messages });
+          if (res.status === "success")
+            dispatch({ type: "loadMessages", payload: res.chat.messages });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
       }
     }
     getChat();
-  }, [activeChatId, dispatch]);
+  }, [activeChatId, dispatch, setIsLoading]);
 
   return (
     <div className="flex items-center justify-between border-b border-light-gray px-5 py-4">
       <div className="flex items-center gap-3">
+        <FontAwesomeIcon
+          icon={faArrowLeft}
+          className="block rounded-full bg-[#F5F5F4] p-2 text-2xl text-dark-gray sm:hidden"
+          onClick={() => {
+            dispatch({ type: "deleteActiveChatId" });
+            dispatch({ type: "deleteUnreadMessages" });
+          }}
+        />
         <img src={photo} alt="user" className="h-12 w-12 rounded-full" />
         {user._id === otherUser._id ? (
           <p className="flex flex-col text-lg font-semibold text-dark-gray">

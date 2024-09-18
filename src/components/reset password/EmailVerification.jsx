@@ -25,7 +25,7 @@ function EmailVerification({ setShowActivationCode }) {
   }
 
   return (
-    <div className="flex h-[100vh] items-center justify-center">
+    <div className="flex h-[70vh] items-center justify-center sm:h-[100vh]">
       <form onSubmit={handleSubmit} className="login-form">
         <p className="mb-10 text-xl font-semibold text-primary">
           Reset Password

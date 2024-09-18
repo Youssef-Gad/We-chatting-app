@@ -1,4 +1,3 @@
-import { useHome } from "../../../context/HomeContext";
 import { useAuth } from "../../../context/AuthContext";
 import { useChat } from "../../../context/ChatContext";
 import { useSocket } from "../../../context/SocketContext";
@@ -6,7 +5,6 @@ import { convertTime } from "../../../helpers/helpers";
 import { useEffect, useState } from "react";
 
 function Chat({ chat }) {
-  const { setOpenChat, openChat, setOpenChatMobile } = useHome();
   const { user } = useAuth();
   const { dispatch, inputRef, activeChatId, unreadMessages } = useChat();
   const { socket } = useSocket();
@@ -73,7 +71,7 @@ function Chat({ chat }) {
     photo = chat.user.photo;
   }
 
-   async function handleOnChatClick() {
+  async function handleOnChatClick() {
     dispatch({ type: "setActiveChatId", payload: chat._id });
     dispatch({ type: "setOtherUser", payload: chat.user });
 
@@ -83,21 +81,25 @@ function Chat({ chat }) {
       roomId: chat._id,
     });
 
-    setOpenChat(chat._id);
     inputRef?.current?.focus();
   }
 
   return (
     <div
-      className={`${openChat === chat._id ? "border-r-2 border-primary bg-[#EAF2F0]" : "border-r-2 border-[#eeeeee86] hover:bg-[#eeeeee86]"} relative flex cursor-pointer justify-between p-5`}
+      className={`${activeChatId === chat._id ? "border-r-2 border-primary bg-[#EAF2F0]" : "border-r-2 border-[#eeeeee86] hover:bg-[#eeeeee86]"} flex cursor-pointer justify-between p-5`}
       onClick={handleOnChatClick}
     >
       <div className="flex gap-6">
-        <img
-          src={photo}
-          alt="user"
-          className="h-12 w-12 rounded-full sm:h-14 sm:w-14"
-        />
+        <div className="relative">
+          <img
+            src={photo}
+            alt="user"
+            className="h-12 w-12 rounded-full sm:h-14 sm:w-14"
+          />
+          {isOnline && (
+            <div className="absolute top-0 h-4 w-4 rounded-full bg-green-500"></div>
+          )}
+        </div>
         <div className="flex flex-col gap-1">
           {user._id === chat.user._id ? (
             <p className="text-xl font-semibold text-dark-gray">
@@ -107,9 +109,6 @@ function Chat({ chat }) {
             <p className="text-xl font-semibold text-dark-gray">
               {firstName} {lastName}
             </p>
-          )}
-          {isOnline && (
-            <div className="absolute right-[28.4rem] top-5 h-4 w-4 rounded-full bg-green-500"></div>
           )}
 
           <p className="text-gray">

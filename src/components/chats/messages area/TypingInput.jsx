@@ -76,7 +76,7 @@ function TypingInput() {
           className="absolute bottom-[5rem] left-[3rem]"
           ref={emojiPickerRef}
         >
-          <EmojiPicker onEmojiClick={handleEmojiClick} />
+          <EmojiPicker onEmojiClick={handleEmojiClick} width={280} />
         </div>
       )}
       <div className="flex w-full items-center justify-between">

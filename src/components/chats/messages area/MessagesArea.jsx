@@ -3,8 +3,9 @@ import { useChat } from "../../../context/ChatContext";
 import Message from "./Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import Loader from "../../../ui/Loader";
 
-function MessagesArea() {
+function MessagesArea({ isLoading }) {
   const { messages } = useChat();
   const messagesEndRef = useRef(null);
   const messageArea = useRef(null);
@@ -45,9 +46,16 @@ function MessagesArea() {
     };
   }, []);
 
+  if (isLoading)
+    return (
+      <div className="bg-light-gray">
+        <Loader />
+      </div>
+    );
+
   return (
     <div
-      className="flex flex-grow flex-col items-end gap-2 overflow-y-scroll bg-light-gray px-14 py-3"
+      className="relative flex flex-grow flex-col items-end gap-2 overflow-y-scroll bg-light-gray px-14 py-3"
       ref={messageArea}
     >
       {messages.map((message, i) => (
