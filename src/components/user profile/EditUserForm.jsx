@@ -39,7 +39,7 @@ function EditUserForm() {
 
         if (res.success === true) {
           toast.success("Data Updated Successfully");
-          setUser(res.getUserObj);
+          setUser(res.user);
         } else if (res.success === "error") toast.error(res.message);
       }
     } catch (error) {
