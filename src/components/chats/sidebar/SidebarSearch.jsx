@@ -41,17 +41,11 @@ function SidebarSearch() {
   async function OnClickSerachedUser(otherSearchedUser) {
     const res = await getAllChatsOfUser();
     if (res.status === "Success") {
-      const searchedObj = res.chats.filter(
+      const searchedObj = res.chatResponse.filter(
         (chatObj) => chatObj.user._id === otherSearchedUser._id,
       );
 
       if (!searchedObj.length) {
-        console.log({
-          senderId: user._id,
-          receiverId: otherSearchedUser._id,
-          roomId: null,
-        });
-
         socket.emit("join_create_room", {
           senderId: user._id,
           receiverId: otherSearchedUser._id,

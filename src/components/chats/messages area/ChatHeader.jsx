@@ -60,6 +60,7 @@ function ChatHeader({ setIsLoading }) {
           onClick={() => {
             dispatch({ type: "deleteActiveChatId" });
             dispatch({ type: "deleteUnreadMessages" });
+            socket.emit("disconnect_from_room", user._id);
           }}
         />
         <img src={photo} alt="user" className="h-12 w-12 rounded-full" />
