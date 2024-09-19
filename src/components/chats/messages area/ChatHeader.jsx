@@ -74,7 +74,7 @@ function ChatHeader({ setIsLoading }) {
         ) : (
           <p className="flex flex-col text-lg font-semibold text-dark-gray">
             {firstName} {lastName}
-            <span className="text-[0.9rem] font-normal italic tracking-wider">
+            <span className="h-1 pb-4 text-[0.9rem] font-normal italic tracking-wider">
               {isTyping && activeChatId === roomId ? "typing..." : ""}
             </span>
           </p>

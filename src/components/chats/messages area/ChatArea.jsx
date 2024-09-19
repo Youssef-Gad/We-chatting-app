@@ -10,7 +10,7 @@ function ChatArea() {
 
   return (
     <div
-      className={`${activeChatId === null ? "hidden sm:flex" : "flex"} flex-grow flex-col justify-between`}
+      className={`${activeChatId === null ? "hidden md:flex" : "flex"} flex-grow flex-col justify-between`}
     >
       <ChatHeader setIsLoading={setIsLoading} />
       <MessagesArea isLoading={isLoading} />
