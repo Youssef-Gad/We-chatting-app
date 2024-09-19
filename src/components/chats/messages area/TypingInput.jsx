@@ -45,6 +45,7 @@ function TypingInput() {
     inputRef.current.focus();
   }
 
+  // It handle Enter key click
   function handleKeyDown(e) {
     if (e.key === "Enter" && message.length) {
       setMessage("");

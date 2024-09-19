@@ -13,9 +13,11 @@ import { register } from "../../services/apiAuth";
 import toast from "react-hot-toast";
 
 function RegisterForm() {
+  // states for show password and hide it
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // states for form inputs
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,6 +31,7 @@ function RegisterForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
+  // Here i used normal way to submit form unlike login because handling send photo is easier with this way
   async function handleSubmit(e) {
     e.preventDefault();
     if (!formRef.current) return;
@@ -36,6 +39,7 @@ function RegisterForm() {
     setIsSubmitting(true);
 
     try {
+      // I send data as formData not in Json form because backend need this
       const formData = new FormData();
       formData.append("photo", photo);
       formData.append("firstName", firstName);

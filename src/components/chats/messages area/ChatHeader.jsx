@@ -1,12 +1,11 @@
 import { useChat } from "../../../context/ChatContext";
 import { useEffect, useState } from "react";
-import { getChatById } from "../../../services/apiChat";
 import { useAuth } from "../../../context/AuthContext";
 import { useSocket } from "../../../context/SocketContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-function ChatHeader({ setIsLoading }) {
+function ChatHeader() {
   const { activeChatId, dispatch, otherUser } = useChat();
   const { user } = useAuth();
   const { socket } = useSocket();
@@ -14,6 +13,7 @@ function ChatHeader({ setIsLoading }) {
   const [roomId, setRoomId] = useState("");
   const { firstName, lastName, photo } = otherUser;
 
+  // It handle is typing state it appear for 3sec and then disappear
   useEffect(() => {
     socket.on("is_typing", (roomId) => {
       if (roomId === activeChatId) {
@@ -31,25 +31,6 @@ function ChatHeader({ setIsLoading }) {
       });
     };
   }, [activeChatId, socket]);
-
-  useEffect(() => {
-    async function getChat() {
-      setIsLoading(true);
-      try {
-        if (activeChatId) {
-          const res = await getChatById(activeChatId);
-
-          if (res.status === "success")
-            dispatch({ type: "loadMessages", payload: res.chat.messages });
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    getChat();
-  }, [activeChatId, dispatch, setIsLoading]);
 
   return (
     <div className="flex items-center justify-between border-b border-light-gray px-5 py-4">

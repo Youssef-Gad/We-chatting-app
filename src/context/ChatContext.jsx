@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useRef } from "react";
 
+// This context is handling all global states for application
 const ChatContext = createContext();
 
 const initialState = {
@@ -30,6 +31,8 @@ function chatReducer(state, action) {
       });
 
       return { ...state, messages: updatedMessagesIsDelivered };
+
+    // Its filter only updated messages and make it seen
     case "updateMessagesIsSeen":
       const updatedMessagesIsSeen = state.messages.map((message) => {
         if (message._id === action.payload._id)
@@ -46,6 +49,8 @@ function chatReducer(state, action) {
         ...state,
         chats: action.payload,
       };
+
+    // It used to update unread Messages
     case "updateChats":
       const findChat = state.chats.filter(
         (chat) => chat._id === action.payload._id,
@@ -56,6 +61,8 @@ function chatReducer(state, action) {
         ...state,
         chats: [action.payload, ...state.chats],
       };
+
+    // It update lastSentMessage data and sort chat to make last chat in first place
     case "updateChatsStatus":
       const updatedChatsStatus = state.chats.map((chat) => {
         if (chat._id === action.payload.activeChatId) {

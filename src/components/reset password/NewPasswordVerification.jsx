@@ -66,11 +66,16 @@ export async function action({ request }) {
   const passwordResetVerificationToken = localStorage.getItem(
     "passwordResetVerificationToken",
   );
+
+  // Concatenate the six input values into a verification code.
   const verificationCode = `${data.num1}${data.num2}${data.num3}${data.num4}${data.num5}${data.num6}`;
+
+  // Call API to verify the password reset code using the token.
   const res = await passwordResetVerification(
     { verificationCode },
     passwordResetVerificationToken,
   );
+
   if (res.success === true) {
     localStorage.setItem("passwordResetToken", res.passwordResetToken);
     toast.success(res.message);

@@ -4,13 +4,35 @@ import Message from "./Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Loader from "../../../ui/Loader";
+import { getChatById } from "../../../services/apiChat";
 
-function MessagesArea({ isLoading }) {
-  const { messages } = useChat();
+function MessagesArea() {
+  const { messages, dispatch, activeChatId } = useChat();
   const messagesEndRef = useRef(null);
   const messageArea = useRef(null);
   const previousScrollTop = useRef(0);
   const [showScrollToDown, setShowScrollToDown] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // It use to fetch messages automatic when user click on chat
+  useEffect(() => {
+    async function getChat() {
+      setIsLoading(true);
+      try {
+        if (activeChatId) {
+          const res = await getChatById(activeChatId);
+
+          if (res.status === "success")
+            dispatch({ type: "loadMessages", payload: res.chat.messages });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getChat();
+  }, [activeChatId, dispatch, setIsLoading]);
 
   function handleScrollToDown() {
     if (messagesEndRef.current) {

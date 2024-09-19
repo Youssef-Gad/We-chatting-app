@@ -5,7 +5,9 @@ import { useChat } from "./ChatContext";
 import { getAllChatsOfUser } from "../services/apiChat";
 import { getCurrentTime } from "../helpers/helpers";
 
+// This context handling all listen(on) events or emitting connections with backend
 const SocketContext = createContext();
+
 const socket = io("http://localhost:3000");
 
 export function SocketProvider({ children }) {
@@ -18,6 +20,7 @@ export function SocketProvider({ children }) {
     }
   }, [user._id]);
 
+  // This useEffect get all chats from backend with refresh
   useEffect(() => {
     async function fetchChats() {
       dispatch({ type: "setIsLoading", payload: true });
@@ -36,6 +39,7 @@ export function SocketProvider({ children }) {
     fetchChats();
   }, [dispatch]);
 
+  // This useEffect handling all messages events listening from backend sockets
   useEffect(() => {
     const handleMessage = (messageData) => {
       if (messageData.toBeSentRoom._id === activeChatId)
@@ -100,6 +104,7 @@ export function SocketProvider({ children }) {
 
     socket.on("message_seen", handleMessageIsSeen);
 
+    // This prevents memory leaks and duplicated event listeners that can cause unintended behavior
     return () => {
       socket.off("message", handleMessage);
       socket.off("message_delivered", handleIsDelivered);

@@ -3,6 +3,7 @@ import { protectedRoute } from "../services/apiAuth";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
+// This context handle all authentication process with backend and set current user as global state
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -11,6 +12,7 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  // This useEffect use to make sure that how access home page is logged in with email
   useEffect(() => {
     const checkAuth = async () => {
       const res = await protectedRoute();

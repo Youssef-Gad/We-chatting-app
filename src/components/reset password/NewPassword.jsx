@@ -112,12 +112,18 @@ export async function action({ request }) {
   const data = Object.fromEntries(formData);
   const passwordResetToken = localStorage.getItem("passwordResetToken");
   const res = await resetPassword(data, passwordResetToken);
+  // Initialize an empty object to store any errors.
   const errors = {};
 
+  // Map through any validation errors and associate them with their respective form fields.
   if (res.errors?.length) {
     res.errors.map((error) => (errors[error.path] = error.msg));
   }
+
+  // If there are validation errors, return them.
   if (Object.keys(errors).length > 0) return errors;
+
+  // If the password reset was successful, display a success message and redirect to login.
   if (res.success === true) {
     toast.success(res.message);
     return redirect("/login");

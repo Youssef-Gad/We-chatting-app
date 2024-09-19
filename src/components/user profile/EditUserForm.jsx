@@ -9,16 +9,19 @@ import { useHome } from "../../context/HomeContext";
 function EditUserForm() {
   const { user, setUser } = useAuth();
   const { setCurrentSection } = useHome();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // states for form inputs
   const [newFirstName, setNewFirstName] = useState("");
   const [newLastName, setNewLastName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhoto, setNewPhoto] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      // Here used formData not Json form because backend need this
       const formData = new FormData();
 
       const userData = {
@@ -28,6 +31,7 @@ function EditUserForm() {
         photo: newPhoto,
       };
 
+      // Here i filter only changed data and not send all userData obj to backend
       const filterdUserData = Object.fromEntries(
         Object.entries(userData).filter(([_, value]) => {
           if (typeof value === "object") return true;
@@ -37,16 +41,12 @@ function EditUserForm() {
       );
 
       Object.entries(filterdUserData).forEach(([key, value]) => {
-        // console.lo(key, value);
-
         formData.append(key, value);
       });
 
+      // Check if there is filterd data to send api to backend
       if (Object.entries(filterdUserData).length) {
         const res = await updateUser(formData);
-        // const res = await updateUser(filterdUserData);
-
-        // console.log(res);
 
         if (res.success === true) {
           toast.success("Data Updated Successfully");

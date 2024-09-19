@@ -18,12 +18,14 @@ function ActivateAccount() {
     } else if (res.success === "fail") toast.error(res.message);
   }
 
+  // useEffect to manage the countdown timer.
   useEffect(() => {
     if (seconds > 0) {
       const timerId = setInterval(() => {
         setSeconds((prevSeconds) => prevSeconds - 1);
       }, 1000);
 
+      // Clear the interval when component unmounts or when seconds hit 0.
       return () => clearInterval(timerId);
     }
   }, [seconds]);
@@ -90,9 +92,12 @@ export default ActivateAccount;
 export async function action({ request }) {
   const formData = await request.formData();
   const nums = Object.fromEntries(formData);
+
+  // Concatenate the six input values into an activation code.
   const activationCode = `${nums.num1}${nums.num2}${nums.num3}${nums.num4}${nums.num5}${nums.num6}`;
   const token = localStorage.getItem("activationToken");
 
+  // If an activation code is provided, attempt to activate the account.
   if (activationCode.length) {
     const res = await activateEmail({ activationCode }, token);
 

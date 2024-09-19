@@ -16,6 +16,7 @@ function Chat({ chat }) {
   const [unreadNum, setUnreadNum] = useState(0);
   let firstName, lastName, photo;
 
+  // It handle unreadMessages => i get set it in local storage and update unreadCount state
   useEffect(() => {
     if (activeChatId === null) {
       const unreadCount = unreadMessages?.filter(
@@ -28,6 +29,7 @@ function Chat({ chat }) {
     }
   }, [activeChatId, unreadMessages, chat._id]);
 
+  // It handle online state of users
   useEffect(() => {
     const handleOnlineUsers = (data) => {
       if (data)
@@ -50,11 +52,7 @@ function Chat({ chat }) {
     };
   }, [socket, chat.user._id, flag, onlineUsers]);
 
-  useEffect(() => {
-    if (onlineUsers.includes(chat.user._id)) setIsOnline(true);
-    else setIsOnline(false);
-  }, [onlineUsers, chat.user._id]);
-
+  // It handle lastSeen message to appear on chat with time and content
   useEffect(() => {
     if (chat.lastSentMessage === null) {
       setContent("Start Conversation");

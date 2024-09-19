@@ -6,14 +6,13 @@ import TypingInput from "./TypingInput";
 
 function ChatArea() {
   const { activeChatId } = useChat();
-  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div
       className={`${activeChatId === null ? "hidden md:flex" : "flex"} flex-grow flex-col justify-between`}
     >
-      <ChatHeader setIsLoading={setIsLoading} />
-      <MessagesArea isLoading={isLoading} />
+      <ChatHeader />
+      <MessagesArea />
       <TypingInput />
     </div>
   );

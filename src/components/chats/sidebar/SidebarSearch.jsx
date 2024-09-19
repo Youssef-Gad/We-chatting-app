@@ -27,6 +27,7 @@ function SidebarSearch() {
     }
   }
 
+  // This useEffect detects when room created in backend i make chats sync with database
   useEffect(() => {
     socket.on("room_created", (roomInfo) => {
       dispatch({ type: "updateChats", payload: roomInfo });
@@ -38,6 +39,7 @@ function SidebarSearch() {
     };
   }, [dispatch, socket]);
 
+  // It handle when someone select user on search to start a chat with so its appear on chatlist
   async function OnClickSerachedUser(otherSearchedUser) {
     const res = await getAllChatsOfUser();
     if (res.status === "Success") {

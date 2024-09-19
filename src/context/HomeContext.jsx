@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
+// This Context is resposiple for home page it detects sections renderes
 const HomeContext = createContext();
 
 export function HomeProvider({ children }) {

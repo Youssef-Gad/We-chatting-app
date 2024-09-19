@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 
+// This Hook Make any component closed when we click outside it
 function useOutsideClick(ref, buttonRef) {
   const [isOpen, setIsOpen] = useState(false);
 

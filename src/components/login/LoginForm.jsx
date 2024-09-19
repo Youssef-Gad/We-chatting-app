@@ -114,15 +114,21 @@ export async function action({ request }) {
   const data = Object.fromEntries(formData);
   const res = await login(data);
 
+  // Handle failed login attempts or form validation errors.
   if (res.success === "fail") {
     toast.error(res.message);
+
+    // Show a specific error message if email is incorrect.
   } else if (res.errors?.length > 0) {
     toast.error("Wrong Email");
   } else if (res.success === true) {
+    // Check if the account requires email activation.
     if (res.activationToken !== undefined) {
       localStorage.setItem("activationToken", res.activationToken);
       toast.error("Please Activate Your Email");
       return redirect("/activateAccount");
+
+      // Handle successful login.
     } else {
       toast.success("Successfully Logged In");
       localStorage.setItem("token", res.token);
