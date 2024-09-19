@@ -23,7 +23,6 @@ export function SocketProvider({ children }) {
       dispatch({ type: "setIsLoading", payload: true });
       try {
         const res = await getAllChatsOfUser();
-        console.log(res);
 
         if (res.status === "Success") {
           dispatch({ type: "setChats", payload: res.chatResponse });

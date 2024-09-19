@@ -4,19 +4,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faUser } from "@fortawesome/free-solid-svg-icons";
 import { updateUser } from "../../services/apiUser";
 import toast from "react-hot-toast";
+import { useHome } from "../../context/HomeContext";
 
 function EditUserForm() {
+  const { user, setUser } = useAuth();
+  const { setCurrentSection } = useHome();
   const [newFirstName, setNewFirstName] = useState("");
   const [newLastName, setNewLastName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhoto, setNewPhoto] = useState("");
-  const { user, setUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const formData = new FormData();
+
       const userData = {
         firstName: newFirstName,
         lastName: newLastName,
@@ -25,21 +29,29 @@ function EditUserForm() {
       };
 
       const filterdUserData = Object.fromEntries(
-        Object.entries(userData).filter(([key, value]) => {
+        Object.entries(userData).filter(([_, value]) => {
           if (typeof value === "object") return true;
           else if (value.length === 0) return false;
           else return true;
         }),
       );
 
+      Object.entries(filterdUserData).forEach(([key, value]) => {
+        // console.lo(key, value);
+
+        formData.append(key, value);
+      });
+
       if (Object.entries(filterdUserData).length) {
-        const res = await updateUser(filterdUserData);
-        console.log(res);
-        console.log(filterdUserData);
+        const res = await updateUser(formData);
+        // const res = await updateUser(filterdUserData);
+
+        // console.log(res);
 
         if (res.success === true) {
           toast.success("Data Updated Successfully");
           setUser(res.user);
+          setCurrentSection("settings");
         } else if (res.success === "error") toast.error(res.message);
       }
     } catch (error) {
