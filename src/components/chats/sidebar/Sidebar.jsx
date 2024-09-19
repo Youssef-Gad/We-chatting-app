@@ -7,7 +7,7 @@ function Sidebar() {
   const { activeChatId } = useChat();
   return (
     <div
-      className={`${activeChatId === null ? "flex" : "hidden sm:flex"} min-w-full flex-col border-r border-light-gray md:min-w-[500px]`}
+      className={`${activeChatId === null ? "flex" : "hidden md:flex"} min-w-full flex-col border-r border-light-gray md:min-w-[500px]`}
     >
       <SidebarHeader />
       <SidebarSearch />
