@@ -1,23 +1,30 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Register from "./components/register/Register";
 import { action as loginAction } from "./components/login/LoginForm";
-import Login from "./components/login/Login";
-import NotFound from "./components/not-found/NotFound";
-import Home from "./components/chats/Home";
-import ActivateAccount, {
-  action as activateAccountAction,
-} from "./components/register/ActivateAccount";
+import { action as activateAccountAction } from "./components/register/ActivateAccount";
 import { Toaster } from "react-hot-toast";
-import NewPasswordVerification, {
-  action as NewPasswordVerificationAction,
-} from "./components/reset password/NewPasswordVerification";
-import NewPassword, {
-  action as newPasswordAction,
-} from "./components/reset password/NewPassword";
+import { action as NewPasswordVerificationAction } from "./components/reset password/NewPasswordVerification";
+import { action as newPasswordAction } from "./components/reset password/NewPassword";
 import { AuthProvider } from "./context/AuthContext";
 import { HomeProvider } from "./context/HomeContext";
 import { SocketProvider } from "./context/SocketContext";
 import { ChatProvider } from "./context/ChatContext";
+import { lazy, Suspense } from "react";
+import Loader from "./ui/Loader";
+
+// Lazy load components
+const Register = lazy(() => import("./components/register/Register"));
+const Login = lazy(() => import("./components/login/Login"));
+const NotFound = lazy(() => import("./components/not-found/NotFound"));
+const Home = lazy(() => import("./components/chats/Home"));
+const ActivateAccount = lazy(
+  () => import("./components/register/ActivateAccount"),
+);
+const NewPasswordVerification = lazy(
+  () => import("./components/reset password/NewPasswordVerification"),
+);
+const NewPassword = lazy(
+  () => import("./components/reset password/NewPassword"),
+);
 
 const router = createBrowserRouter([
   {
@@ -27,27 +34,67 @@ const router = createBrowserRouter([
         <ChatProvider>
           <SocketProvider>
             <HomeProvider>
-              <Home />
+              <Suspense fallback={<Loader />}>
+                <Home />
+              </Suspense>
             </HomeProvider>
           </SocketProvider>
         </ChatProvider>
       </AuthProvider>
     ),
   },
-  { path: "/register", element: <Register /> },
+  {
+    path: "/register",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <Register />
+      </Suspense>
+    ),
+  },
   {
     path: "/activateAccount",
-    element: <ActivateAccount />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ActivateAccount />
+      </Suspense>
+    ),
     action: activateAccountAction,
   },
   {
     path: "/newPasswordVerifiction",
-    element: <NewPasswordVerification />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <NewPasswordVerification />
+      </Suspense>
+    ),
     action: NewPasswordVerificationAction,
   },
-  { path: "/newPassword", element: <NewPassword />, action: newPasswordAction },
-  { path: "/login", element: <Login />, action: loginAction },
-  { path: "/*", element: <NotFound /> },
+  {
+    path: "/newPassword",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <NewPassword />
+      </Suspense>
+    ),
+    action: newPasswordAction,
+  },
+  {
+    path: "/login",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <Login />
+      </Suspense>
+    ),
+    action: loginAction,
+  },
+  {
+    path: "/*",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <NotFound />
+      </Suspense>
+    ),
+  },
 ]);
 
 function App() {
